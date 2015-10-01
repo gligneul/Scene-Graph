@@ -235,11 +235,11 @@ static std::tuple<Node*, Camera*, Manipulator*> CreateLamp() {
     cone->SetAppearance(cone_m);
 
     auto light_t = new Transform();
-    light_t->Translate(0, 0, 1);
+    light_t->Translate(0, 0, 0);
     cone_t->AddNode(light_t);
 
     auto light = new Light();
-    light->SetupSpot(0, 0, 1, 30, 0);
+    light->SetupSpot(0, 0, 1, 26.5, 0);
     light_t->AddNode(light);
 
     auto camera_t = new Transform();
