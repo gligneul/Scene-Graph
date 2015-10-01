@@ -135,6 +135,16 @@ static void CreateScene() {
     ball->SetShape(new Sphere(5));
     ball->SetAppearance(new Material(0x10E050));
     ball_t->AddNode(ball);
+
+    auto cylinder_t = new Transform();
+    cylinder_t->Translate(25, 0, 0);
+    cylinder_t->Rotate(-90, 1, 0, 0);
+    table_top->AddNode(cylinder_t);
+
+    auto cylinder = new Entity();
+    cylinder->SetShape(new Cylinder(6, 6, 13));
+    cylinder->SetAppearance(new Material(0xF4876A));
+    cylinder_t->AddNode(cylinder);
 }
 
 static Node* CreateTable(float height) {
@@ -180,11 +190,9 @@ static std::tuple<Node*, Camera*, Manipulator*> CreateLamp() {
     const float ARM_OFFSET = 3;
     const float CONE_HEIGHT = 16;
 
-    auto material = new Material();
-    material->SetColor(0xD2691E);
 
     auto base = new Entity();
-    base->SetAppearance(material);
+    base->SetAppearance(new Material(0x736F66));
     base->SetShape(new Cylinder(BASE_RADIUS, BASE_RADIUS, BASE_HEIGHT));
     lamp->AddNode(base);
 
@@ -194,8 +202,10 @@ static std::tuple<Node*, Camera*, Manipulator*> CreateLamp() {
     arm1_t->Rotate(-25, 1, 0, 0);
     lamp->AddNode(arm1_t);
 
+    auto arm_material = new Material(0xF3F3F3);
+
     auto arm1 = new Entity();
-    arm1->SetAppearance(material);
+    arm1->SetAppearance(arm_material);
     arm1->SetShape(arm_s);
     arm1_t->AddNode(arm1);
 
@@ -206,7 +216,7 @@ static std::tuple<Node*, Camera*, Manipulator*> CreateLamp() {
     arm1_t->AddNode(arm2_t);
 
     auto arm2 = new Entity();
-    arm2->SetAppearance(material);
+    arm2->SetAppearance(arm_material);
     arm2->SetShape(arm_s);
     arm2_t->AddNode(arm2);
 
@@ -219,11 +229,9 @@ static std::tuple<Node*, Camera*, Manipulator*> CreateLamp() {
     cone->SetShape(new Cylinder(0, CONE_HEIGHT / 2, CONE_HEIGHT, false));
     cone_t->AddNode(cone);
 
-    auto cone_m = new Material();
+    auto cone_m = new Material(0x22ADC2);
     cone_m->SetShininess(25);
-    cone_m->SetAmbient(0.04, 0.13, 0.18);
-    cone_m->SetDiffuse(0.19, 0.76, 0.82);
-    cone_m->SetSpecular(0.09, 0.30, 0.40);
+    cone_m->SetSpecular(0.5, 0.5, 0.5);
     cone->SetAppearance(cone_m);
 
     auto light_t = new Transform();
