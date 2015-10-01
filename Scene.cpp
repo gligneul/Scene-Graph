@@ -32,7 +32,7 @@ void Scene::SetEnviron(Environ* environ) {
 }
 
 void Scene::Render() {
-    //environ_->SetupEnvironment();
+    environ_->SetupEnvironment();
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
