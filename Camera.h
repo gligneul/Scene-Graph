@@ -24,11 +24,6 @@ public:
     Camera();
 
     /**
-     * Destructor
-     */
-    ~Camera();
-    
-    /**
      * Sets the eye coordinates
      * Default = (1, 0, 0)
      */

@@ -22,11 +22,6 @@ public:
     Transform();
 
     /**
-     * Destructor
-     */
-    ~Transform();
-    
-    /**
      * Loads the identity matrix
      */
     void LoadIndentity();

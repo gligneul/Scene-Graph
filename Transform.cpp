@@ -16,10 +16,6 @@ Transform::Transform() :
     LoadIndentity();
 }
 
-Transform::~Transform() {
-    delete manipulator_;
-}
-
 void Transform::LoadIndentity() {
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();

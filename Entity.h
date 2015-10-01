@@ -25,11 +25,6 @@ public:
     Entity();
 
     /**
-     * Destructor
-     */
-    ~Entity();
-
-    /**
      * Sets the appearance
      */
     void SetAppearance(Appearance* appearance);

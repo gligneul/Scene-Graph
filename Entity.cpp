@@ -16,11 +16,6 @@ Entity::Entity() :
     shape_(nullptr) {
 }
 
-Entity::~Entity() {
-    delete appearance_;
-    delete shape_;
-}
-
 void Entity::SetAppearance(Appearance* appearance) {
     appearance_ = appearance;
 }

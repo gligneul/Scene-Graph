@@ -27,10 +27,6 @@ Scene::Scene() :
         glEnable(GL_LIGHT0 + i);
 }
 
-Scene::~Scene() {
-    delete environ_;
-}
-
 void Scene::SetEnviron(Environ* environ) {
     environ_ = environ;
 }

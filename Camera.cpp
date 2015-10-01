@@ -25,10 +25,6 @@ Camera::Camera() :
     manipulator_(nullptr) {
 }
 
-Camera::~Camera() {
-    delete manipulator_;
-}
-    
 void Camera::SetEye(double x, double y, double z) {
     eye_[0] = x;
     eye_[1] = y;

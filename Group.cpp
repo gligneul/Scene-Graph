@@ -9,8 +9,6 @@
 #include "Group.h"
 
 Group::~Group() {
-    for (auto& node : nodes_)
-        delete node;
 }
 
 void Group::AddNode(Node* node) {

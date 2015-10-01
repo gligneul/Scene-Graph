@@ -24,11 +24,6 @@ public:
     Scene();
 
     /**
-     * Destructor
-     */
-    ~Scene();
-
-    /**
      * Sets the enviroment
      */
     void SetEnviron(Environ* environ);

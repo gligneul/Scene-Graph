@@ -19,9 +19,9 @@
 class Group : public Node {
 public:
     /**
-     * Destructor
+     * Virtual destructor
      */
-    virtual ~Group();
+    ~Group();
 
     /**
      * Adds a node to the group
@@ -49,7 +49,7 @@ public:
 
 private:
     /** Group's children */
-    std::vector< Node* > nodes_;
+    std::vector<Node*> nodes_;
 };
 
 #endif
