@@ -18,9 +18,9 @@
 Manipulator::Manipulator() :
     reference_{0, 0, 0},
     matrix_{1, 0, 0, 0,
-             0, 1, 0, 0,
-             0, 0, 1, 0,
-             0, 0, 0, 1},
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1},
     operation_(Operation::kNone),
     x_{0},
     y_{0},
@@ -58,6 +58,12 @@ void Manipulator::GlutMotion(int x, int y) {
         glRotatef(theta, w[0], w[1], w[2]);
         v_ = v;
     } else if (operation_ == Operation::kZoom) {
+        int vp[4]; 
+        glGetIntegerv(GL_VIEWPORT, vp);
+        float dy = y - y_;
+        float f = dy / vp[3];
+        float scale = 1 + kZoomScale * f;
+        glScalef(scale, scale, scale);
     }
 
     glMultMatrixf(matrix_.data());

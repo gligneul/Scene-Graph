@@ -45,9 +45,13 @@ private:
         kNone
     };
 
+    float kZoomScale = 1.0f;
+
+    /** Verifies the k_button state and sets the k_operation */
     template<int k_button, Operation k_operation>
     void SetOperation(int button, int state, int x, int y);
 
+    /** Computes the sphere vector for rotation */
     std::array<float, 3> computeSphereCoordinates(int x, int y);
 
     std::array<float, 3> reference_;
