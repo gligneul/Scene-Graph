@@ -29,6 +29,11 @@ public:
     void SetReferencePoint(float x, float y, float z);
 
     /**
+     * Sets whether each axis is inverted or not
+     */
+    void SetInvertAxis(bool invertX, bool invertY = false);
+
+    /**
      * Mouse button function
      */
     void GlutMouse(int button, int state, int x, int y);
@@ -59,6 +64,7 @@ private:
     Operation operation_;
     float x_, y_;
     std::array<float, 3> v_;
+    bool invertX_, invertY_;
 };
 
 #endif

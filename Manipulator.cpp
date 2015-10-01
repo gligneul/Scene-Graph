@@ -21,10 +21,12 @@ Manipulator::Manipulator() :
             0, 1, 0, 0,
             0, 0, 1, 0,
             0, 0, 0, 1},
-    operation_(Operation::kNone),
+    operation_{Operation::kNone},
     x_{0},
     y_{0},
-    v_{0, 0, 0} {
+    v_{0, 0, 0},
+    invertX_{false},
+    invertY_{false} {
 }
 
 void Manipulator::Apply() {
@@ -40,6 +42,11 @@ void Manipulator::SetReferencePoint(float x, float y, float z) {
 void Manipulator::GlutMouse(int button, int state, int x, int y) {
     SetOperation<GLUT_LEFT_BUTTON, Operation::kRotation>(button, state, x, y);
     SetOperation<GLUT_RIGHT_BUTTON, Operation::kZoom>(button, state, x, y);
+}
+
+void Manipulator::SetInvertAxis(bool invertX, bool invertY) {
+    invertX_ = invertX;
+    invertY_ = invertY;
 }
 
 void Manipulator::GlutMotion(int x, int y) {
@@ -93,6 +100,9 @@ std::array<float, 3> Manipulator::computeSphereCoordinates(int x, int y) {
     glGetIntegerv(GL_VIEWPORT, vp);
     const float w = vp[2];
     const float h = vp[3];
+
+    if (invertX_) x = w - x;
+    if (invertY_) y = h - y;
 
     const float radius = std::min(w / 2.0f, h / 2.0f);
     std::array<float, 3> v = {

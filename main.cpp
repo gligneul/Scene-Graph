@@ -25,7 +25,7 @@
 /* Constants */
 static const float TABLE_HEIGHT = 100;
 
-/* Scene root */
+/* Scene nodes */
 static Scene* scene = nullptr;
 static Camera* global_camera = nullptr;
 static Camera* lamp_camera = nullptr;
@@ -67,18 +67,15 @@ static void Keyboard(unsigned char key, int, int) {
             exit(0);
             break;
         }
-        case 'c': {
-            bool active = global_camera->GetActive();
-            global_camera->SetActive(!active);
-            lamp_camera->SetActive(active);
-            glutPostRedisplay();
-            break;
-        }
-        case 'm': {
-            if (curr_manipulator == global_manipulator)
+        case 't': {
+            bool is_global_active = global_camera->GetActive();
+            global_camera->SetActive(!is_global_active);
+            lamp_camera->SetActive(is_global_active);
+            if (is_global_active)
                 curr_manipulator = lamp_manipulator;
             else
                 curr_manipulator = global_manipulator;
+            glutPostRedisplay();
             break;
         }
     }
@@ -249,6 +246,7 @@ static std::tuple<Node*, Camera*, Manipulator*> CreateLamp() {
     camera_t->AddNode(camera);
 
     auto manipulator = new Manipulator();
+    manipulator->SetInvertAxis(true);
     cone_t->SetManipulator(manipulator);
 
     return std::make_tuple(lamp, camera, manipulator);
