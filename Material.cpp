@@ -48,8 +48,8 @@ void Material::SetSpecular(float r, float g, float b, float a) {
 void Material::SetColor(unsigned int color) {
     std::array<float, 3> c = color::UnsignedToFloat3(color);
     for (int i = 0; i < 3; i++) {
-        ambient_[i] *= c[i];
-        diffuse_[i] *= c[i];
+        ambient_[i] = c[i] * 0.3;
+        diffuse_[i] = c[i];
     }
 }
 
