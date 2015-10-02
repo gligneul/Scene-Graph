@@ -20,6 +20,7 @@
 #include "Light.h"
 #include "Manipulator.h"
 #include "Material.h"
+#include "Mesh.h"
 #include "Scene.h"
 #include "Sphere.h"
 #include "Texture.h"
@@ -150,7 +151,7 @@ static void CreateScene() {
     lamp_manipulator = std::get<2>(lamp);
 
     auto ball_t = new Transform();
-    ball_t->Translate(0, 5, 0);
+    ball_t->Translate(15, 5, 15);
     table_top->AddNode(ball_t);
 
     auto ball = new Entity();
@@ -159,7 +160,7 @@ static void CreateScene() {
     ball_t->AddNode(ball);
 
     auto cylinder_t = new Transform();
-    cylinder_t->Translate(25, 0, 0);
+    cylinder_t->Translate(10, 0, -20);
     cylinder_t->Rotate(-90, 1, 0, 0);
     table_top->AddNode(cylinder_t);
 
@@ -167,6 +168,17 @@ static void CreateScene() {
     cylinder->SetShape(new Cylinder(6, 6, 13));
     cylinder->SetAppearance(new Material(0xF4876A));
     cylinder_t->AddNode(cylinder);
+
+    auto bunny_t = new Transform();
+    bunny_t->Translate(10, 20, -20);
+//    bunny_t->Translate(0, 7, 0);
+    bunny_t->Scale(14, 14, 14);
+    table_top->AddNode(bunny_t);
+
+    auto bunny = new Entity();
+    bunny->SetAppearance(new Material(0xF03333));
+    bunny->SetShape(new Mesh("bunny_small.off"));
+    bunny_t->AddNode(bunny);
 }
 
 static Node* CreateTable(float height) {

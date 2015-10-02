@@ -13,7 +13,7 @@
 #include <GL/glut.h>
 
 #include "Manipulator.h"
-#include "mvector.h"
+#include "vec3.h"
 
 Manipulator::Manipulator() :
     reference_{0, 0, 0},
@@ -58,10 +58,9 @@ void Manipulator::GlutMotion(int x, int y) {
     glLoadIdentity();
 
     if (operation_ == Operation::kRotation) {
-        std::array<float, 3> v = computeSphereCoordinates(x, y);
-        std::array<float, 3> w;
-        mvector::cross(v_.data(), v.data(), w.data());
-        float theta = asin(mvector::length(w.data())) * 180 / M_PI;
+        vec3::Vf v = computeSphereCoordinates(x, y);
+        vec3::Vf w = vec3::cross(v_, v);
+        float theta = asin(vec3::norm(w)) * 180 / M_PI;
         glRotatef(theta, w[0], w[1], w[2]);
         v_ = v;
     } else if (operation_ == Operation::kZoom) {
