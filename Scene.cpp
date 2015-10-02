@@ -15,7 +15,7 @@
 #include "Scene.h"
 
 Scene::Scene() :
-    environ_(nullptr) {
+    environ_{nullptr} {
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
     glEnable(GL_DEPTH_TEST);
@@ -26,8 +26,8 @@ Scene::Scene() :
         glEnable(GL_LIGHT0 + i);
 }
 
-void Scene::SetEnviron(Environ* environ) {
-    environ_ = environ;
+void Scene::SetEnviron(std::unique_ptr<Environ> environ) {
+    environ_ = std::move(environ);
 }
 
 void Scene::Render() {

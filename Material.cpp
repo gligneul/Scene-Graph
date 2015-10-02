@@ -8,6 +8,8 @@
 
 #include <GL/gl.h>
 
+#include "color.h"
+
 #include "Material.h"
 
 Material::Material() :
@@ -44,12 +46,7 @@ void Material::SetSpecular(float r, float g, float b, float a) {
 }
 
 void Material::SetColor(unsigned int color) {
-    float c[3] = {
-        ((color >> 16) & 0xFF) / 256.0f,
-        ((color >> 8) & 0xFF) / 256.0f,
-        (color & 0xFF) / 256.0f
-    };
-
+    std::array<float, 3> c = {color::UnsignedToFloat3(color)};
     for (int i = 0; i < 3; i++) {
         ambient_[i] *= c[i];
         diffuse_[i] *= c[i];

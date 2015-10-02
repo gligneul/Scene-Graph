@@ -9,6 +9,8 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#include <memory>
+
 #include "Group.h"
 
 class Environ;
@@ -26,7 +28,7 @@ public:
     /**
      * Sets the enviroment
      */
-    void SetEnviron(Environ* environ);
+    void SetEnviron(std::unique_ptr<Environ> environ);
 
     /**
      * Renders the scene
@@ -35,7 +37,7 @@ public:
     void Render();
 
 private:
-    Environ* environ_;
+    std::unique_ptr<Environ> environ_;
 };
 
 #endif

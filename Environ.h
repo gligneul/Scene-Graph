@@ -16,17 +16,12 @@ public:
     /**
      * Default constructor
      */
-    Environ() {}
-
-    /**
-     * Loads the environment configuration
-     */
-    void SetupEnvironment() {}
+    Environ();
 
     /**
      * Sets the background color
      */
-    void SetBackgroundColor(float r, float b, float g);
+    void SetBackgroundColor(unsigned int color);
 
     /**
      * Sets the global ambient
@@ -36,14 +31,19 @@ public:
     /**
      * Sets the fog
      */
-    void SetFog(float r, float b, float g, float start, float end,
-            float density);
+    void SetFog(unsigned int color, float start, float end);
+
+    /**
+     * Loads the environment configuration
+     */
+    void SetupEnvironment();
 
 private:
     std::array<float, 3> backgroud_;
     std::array<float, 3> ambient_;
+    bool fog_enable_;
     std::array<float, 3> fog_color_;
-    float fog_start_, fog_end_, fog_density_;
+    float fog_start_, fog_end_;
 };
 
 #endif

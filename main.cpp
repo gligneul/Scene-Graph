@@ -6,6 +6,7 @@
  * Trabalho - Projeto de Grafo de Cena
  */
 
+#include <memory>
 #include <tuple>
 
 #include <GL/gl.h>
@@ -15,6 +16,7 @@
 #include "Cube.h"
 #include "Cylinder.h"
 #include "Entity.h"
+#include "Environ.h"
 #include "Light.h"
 #include "Manipulator.h"
 #include "Material.h"
@@ -68,7 +70,7 @@ static void Keyboard(unsigned char key, int, int) {
             exit(0);
             break;
         }
-        case 't': {
+        case 'c': {
             bool is_global_active = global_camera->GetActive();
             global_camera->SetActive(!is_global_active);
             lamp_camera->SetActive(is_global_active);
@@ -95,10 +97,16 @@ static void Motion(int x, int y) {
 static void CreateScene() {
     scene = new Scene();
 
+    auto environ = new Environ();
+    environ->SetBackgroundColor(0xB1F1FF);
+    environ->SetAmbient(0.5, 0.5, 0.5);
+    environ->SetFog(0xB1F1FF, 100, 500);
+    scene->SetEnviron(std::unique_ptr<Environ>(environ));
+
     float center[3] = {0, 100, 0};
 
     global_camera = new Camera();
-    global_camera->SetEye(100, 200, 150);
+    global_camera->SetEye(130, 200, 130);
     global_camera->SetCenter(center[0], center[1], center[2]);
     global_camera->SetPerspective(50, 5, 500);
     scene->AddNode(global_camera);
@@ -107,9 +115,22 @@ static void CreateScene() {
     global_manipulator->SetReferencePoint(center[0], center[1], center[2]);
     global_camera->SetManipular(global_manipulator);
 
+    auto light_t = new Transform();
+    light_t->Translate(0, 200, 0);
+    scene->AddNode(light_t);
+
     auto light = new Light();
-    light->SetPos(0, 200, 0);
-    scene->AddNode(light);
+    light_t->AddNode(light);
+
+    auto light_sphere = new Entity();
+    light_sphere->SetAppearance(new Material(0xFFFFFF));
+    light_sphere->SetShape(new Sphere(3));
+    light_t->AddNode(light_sphere);
+
+    auto floor = new Entity();
+    floor->SetAppearance(new Material(0xE1F4C4));
+    floor->SetShape(new Cube(500, 0.1, 500));
+    scene->AddNode(floor);
 
     auto table_top = new Transform();
     table_top->Translate(0, TABLE_HEIGHT, 0);
@@ -160,9 +181,9 @@ static Node* CreateTable(float height) {
     leg->SetShape(new Cylinder(3, 3, height - SURFACE_HEIGHT));
     leg->SetAppearance(new Material(0xD2B48C));
 
-    auto create_leg = [table, leg] (float x, float z) {
+    auto create_leg = [table, leg, SURFACE_HEIGHT] (float x, float z) {
         auto leg_t = new Transform();
-        leg_t->Translate(x, 0, z);
+        leg_t->Translate(x, -SURFACE_HEIGHT / 2, z);
         leg_t->Rotate(90, 1, 0, 0);
         leg_t->AddNode(leg);
         table->AddNode(leg_t);
@@ -173,7 +194,6 @@ static Node* CreateTable(float height) {
     create_leg(-LEG_POSITION, -LEG_POSITION);
 
     auto surface = new Entity();
-//    surface->SetAppearance(new Material(0x8B4513));
     surface->SetAppearance(new Texture("wood.png"));
     surface->SetShape(new Cube(TABLE_WIDTH, SURFACE_HEIGHT, TABLE_WIDTH));
     table->AddNode(surface);
@@ -191,7 +211,6 @@ static std::tuple<Node*, Camera*, Manipulator*> CreateLamp() {
     const float ARM_HEIGHT = 35;
     const float ARM_OFFSET = 3;
     const float CONE_HEIGHT = 16;
-
 
     auto base = new Entity();
     base->SetAppearance(new Material(0x736F66));
