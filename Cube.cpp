@@ -52,14 +52,23 @@ void Cube::Draw() {
         {0, 0, -1}
     };
 
+    float texcoords[4][2] = {
+        {0, 0},
+        {1, 0},
+        {1, 1},
+        {0, 1}
+    };
+
     glPushMatrix();
     glScalef(dx_, dy_, dz_);
 
     glBegin(GL_QUADS);
     for (int i = 0; i < 6; i++) {
         glNormal3fv(normals[i]);
-        for (int j = 0; j < 4; j++)
+        for (int j = 0; j < 4; j++) {
             glVertex3fv(vertices[faces[i][j]]);
+            glTexCoord2fv(texcoords[j]);
+        }
     }
     glEnd();
 

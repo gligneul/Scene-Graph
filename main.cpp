@@ -20,6 +20,7 @@
 #include "Material.h"
 #include "Scene.h"
 #include "Sphere.h"
+#include "Texture.h"
 #include "Transform.h"
 
 /* Constants */
@@ -172,7 +173,8 @@ static Node* CreateTable(float height) {
     create_leg(-LEG_POSITION, -LEG_POSITION);
 
     auto surface = new Entity();
-    surface->SetAppearance(new Material(0x8B4513));
+//    surface->SetAppearance(new Material(0x8B4513));
+    surface->SetAppearance(new Texture("wood.png"));
     surface->SetShape(new Cube(TABLE_WIDTH, SURFACE_HEIGHT, TABLE_WIDTH));
     table->AddNode(surface);
 

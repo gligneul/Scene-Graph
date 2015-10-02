@@ -35,8 +35,6 @@ Texture::Texture(const std::string& path) {
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
             GL_LINEAR_MIPMAP_LINEAR);
-//    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-//            GL_UNSIGNED_BYTE, image.data());
     gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, width, height, GL_RGBA,
             GL_UNSIGNED_BYTE, image.data());
 }
@@ -46,9 +44,12 @@ Texture::~Texture() {
 }
 
 void Texture::Load() {
+    glPushAttrib(GL_TEXTURE_BIT);
     glBindTexture(GL_TEXTURE_2D, id_);
+    glEnable(GL_TEXTURE_2D);
 }
 
 void Texture::Unload() {
+    glPopAttrib();
 }
 
