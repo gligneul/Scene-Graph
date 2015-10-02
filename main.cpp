@@ -8,7 +8,9 @@
 
 #include <memory>
 #include <tuple>
+#include <iostream>
 
+#include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glut.h>
 
@@ -55,6 +57,11 @@ int main(int argc, char* argv[]) {
     glutKeyboardFunc(Keyboard);
     glutMouseFunc(Mouse);
     glutMotionFunc(Motion);
+    GLenum err = glewInit();
+    if (GLEW_OK != err) {
+        std::cerr << "Error: " << glewGetErrorString(err) << "\n";
+        exit(1);
+    }
     CreateScene();
     glutMainLoop();
     return 0; 
@@ -100,7 +107,7 @@ static void CreateScene() {
 
     auto environ = new Environ();
     environ->SetBackgroundColor(0xB1F1FF);
-    environ->SetAmbient(0.5, 0.5, 0.5);
+    environ->SetAmbient(0.2, 0.2, 0.2);
     environ->SetFog(0xB1F1FF, 100, 500);
     scene->SetEnviron(std::unique_ptr<Environ>(environ));
 
@@ -177,7 +184,7 @@ static void CreateScene() {
 
     auto bunny = new Entity();
     bunny->SetAppearance(new Material(0xF03333));
-    bunny->SetShape(new Mesh("bunny_small.off"));
+    bunny->SetShape(new Mesh("bunny.off"));
     bunny_t->AddNode(bunny);
 }
 

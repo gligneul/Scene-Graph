@@ -5,8 +5,8 @@
 # Trabalho - Projeto de Grafo de Cena
 
 cc=g++
-cflags=-O2 -g -Wall -Wextra -Werror -std=c++11
-lflags=-lGL -lGLU -lglut
+cflags=-O0 -g -Wall -Wextra -Werror -std=c++11
+lflags=-lGL -lGLU -lGLEW -lglut
 target=scenegraph
 src=$(wildcard *.cpp)
 obj=$(src:.cpp=.o)
@@ -23,6 +23,7 @@ clean:
 	@rm -rf *.o $(target)
 
 %.o: %.cpp
+	@echo "$@: $^"
 	$(cc) $(cflags) -c -o $@ $<
 
 # Dendencies (use 'make depend' to update)

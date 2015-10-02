@@ -17,6 +17,8 @@
 
 #include "Shape.h"
 
+#define ENABLE_VBO
+
 class Mesh : public Shape {
 public:
     /**
@@ -65,6 +67,18 @@ private:
     void CalculateNormals(const std::vector<float>& vertices,
             const std::vector<unsigned int>& indices,
             std::vector<float>& normals);
+
+    /**
+     * Creates the vertex buffer object
+     */
+    void InitializeVBO(const std::vector<float>& vertices,
+            const std::vector<float>& normals,
+            const std::vector<unsigned int> indices);
+
+    unsigned int vbo_[2];
+    unsigned int vertices_offset_;
+    unsigned int normals_offset_;
+    unsigned int n_vertices_;
 
     std::vector<float> vertices_;
     std::vector<float> normals_;

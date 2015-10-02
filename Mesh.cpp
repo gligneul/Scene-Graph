@@ -6,34 +6,65 @@
  * Trabalho - Projeto de Grafo de Cena
  */
 
+#include <cinttypes>
 #include <fstream>
 #include <limits>
 #include <stdexcept>
 
+#include <GL/glew.h>
 #include <GL/gl.h>
 
 #include "vec3.h"
 
 #include "Mesh.h"
 
-Mesh::Mesh(const std::string& path) {
+#define BUFFER_OFFSET(offset) (void*)(intptr_t)(offset)
+
+Mesh::Mesh(const std::string& path) :
+    vbo_{0, 0},
+    vertices_offset_{0},
+    normals_offset_{0},
+    n_vertices_{0} {
     ReadFile(path, vertices_, indices_);
     NormalizeVertices(vertices_);
     CalculateNormals(vertices_, indices_, normals_);
+#ifdef ENABLE_VBO
+    InitializeVBO(vertices_, normals_, indices_);
+#endif
 }
 
 Mesh::~Mesh() {
+#ifdef ENABLE_VBO
+    if (vbo_[0] != 0)
+        glDeleteBuffers(2, vbo_);
+#endif
 }
 
 void Mesh::Draw() {
-    glBegin(GL_TRIANGLES);
+#ifdef ENABLE_VBO
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_[0]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_[1]);
 
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+
+    glVertexPointer(3, GL_FLOAT, 0, BUFFER_OFFSET(vertices_offset_));
+    glNormalPointer(GL_FLOAT, 0, BUFFER_OFFSET(normals_offset_));
+    glDrawElements(GL_TRIANGLES, n_vertices_, GL_UNSIGNED_INT, 0);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+#else
+    glBegin(GL_TRIANGLES);
     for (size_t i = 0; i < indices_.size(); ++i) {
         glNormal3fv(normals_.data() + 3 * indices_[i]);
         glVertex3fv(vertices_.data() + 3 * indices_[i]);
     }
-    
     glEnd();
+#endif
 }
 
 vec3::Vf Mesh::GetVertex(unsigned int index, const float vertices[]) {
@@ -152,5 +183,32 @@ void Mesh::CalculateNormals(const std::vector<float>& vertices,
     normals.resize(vertices.size());
     for (size_t i = 0; i < pre_normals.size(); ++i)
         SetVertex(i, normals.data(), vec3::normalize(pre_normals[i]));
+}
+
+void Mesh::InitializeVBO(const std::vector<float>& vertices,
+        const std::vector<float>& normals,
+        const std::vector<unsigned int> indices) {
+    glGenBuffers(2, vbo_);
+
+    // Load normals and vertices
+    size_t size_vertices = sizeof(float) * vertices.size();
+    size_t size_normals = sizeof(float) * normals.size();
+    vertices_offset_ = 0;
+    normals_offset_ = size_vertices;
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_[0]);
+    glBufferData(GL_ARRAY_BUFFER, size_vertices + size_normals, nullptr,
+            GL_STREAM_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, vertices_offset_, size_vertices,
+            vertices.data());
+
+    glBufferSubData(GL_ARRAY_BUFFER, normals_offset_, size_normals,
+            normals.data());
+
+    // Load indices
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_[1]);
+    size_t size_indices = sizeof(unsigned int) * indices.size();
+    n_vertices_ = indices.size();
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_indices, indices.data(),
+            GL_STATIC_DRAW);
 }
 
