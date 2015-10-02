@@ -38,7 +38,7 @@ public:
     void Unload();
 
 private:
-    unsigned int _id;
+    unsigned int id_;
 };
 
 #endif

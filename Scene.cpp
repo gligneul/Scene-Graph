@@ -20,8 +20,8 @@ Scene::Scene() :
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_NORMALIZE);
-    glEnable(GL_MULTISAMPLE);
     glEnable(GL_LIGHTING);
+    glEnable(GL_TEXTURE_2D);
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
     for (int i = 0; i < 8; i++)
         glEnable(GL_LIGHT0 + i);
