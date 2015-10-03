@@ -11,7 +11,7 @@
 Group::~Group() {
 }
 
-void Group::AddNode(Node* node) {
+void Group::AddNode(std::shared_ptr<Node> node) {
     nodes_.push_back(node);
 }
 

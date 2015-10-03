@@ -8,6 +8,7 @@
 
 #include <cinttypes>
 #include <fstream>
+#include <iostream>
 #include <limits>
 #include <stdexcept>
 
@@ -29,6 +30,7 @@ Mesh::Mesh(const std::string& path) :
     NormalizeVertices(vertices_);
     CalculateNormals(vertices_, indices_, normals_);
 #ifdef ENABLE_VBO
+    std::cout << "VBO enabled\n";
     InitializeVBO(vertices_, normals_, indices_);
 #endif
 }

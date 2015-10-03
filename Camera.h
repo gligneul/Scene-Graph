@@ -9,6 +9,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <array>
+#include <memory>
+
 #include "Node.h"
 
 class Manipulator;
@@ -50,7 +53,7 @@ public:
     /**
      * Sets the manipulator
      */
-    void SetManipular(Manipulator* manipulator);
+    void SetManipular(std::unique_ptr<Manipulator> manipulator);
 
     /**
      * Sets the camera
@@ -60,13 +63,13 @@ public:
     bool SetupCamera(float* modelView);
 
 private:
-    double eye_[3];
-    double center_[3];
-    double up_[3];
+    std::array<double, 3> eye_;
+    std::array<double, 3> center_;
+    std::array<double, 3> up_;
     double fovy_;
     double znear_;
     double zfar_;
-    Manipulator* manipulator_;
+    std::unique_ptr<Manipulator> manipulator_;
 };
 
 #endif

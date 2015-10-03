@@ -13,40 +13,55 @@
 #include "Environ.h"
 
 Environ::Environ() :
-    backgroud_{0, 0, 0},
-    ambient_{0.1, 0.1, 0.1},
-    fog_enable_{false},
-    fog_color_{1, 1, 1},
-    fog_start_{0},
-    fog_end_{1} {
+    fog_type_{FogType::kFogDisabled} {
 }
 
 void Environ::SetBackgroundColor(unsigned int color) {
-    backgroud_ = color::UnsignedToFloat3(color);
+    std::array<float, 3> backgroud = color::UnsignedToFloat3(color);
+    glClearColor(backgroud[0], backgroud[1], backgroud[2], 1.0f);
 }
 
 void Environ::SetAmbient(float r, float g, float b) {
-    ambient_ = {r, g, b};
+    std::array<float, 3> ambient = {r, g, b};
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient.data());
 }
 
-void Environ::SetFog(unsigned int color, float start, float end) {
-    fog_enable_ = true;
-    fog_color_ = color::UnsignedToFloat3(color);
-    fog_start_ = start;
-    fog_end_ = end;
-}
-
-void Environ::SetupEnvironment() {
-    glClearColor(backgroud_[0], backgroud_[1], backgroud_[2], 1.0f);
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient_.data());
-    if (fog_enable_) {
+void Environ::SetFogType(FogType type) {
+    fog_type_ = type;
+    if (type != FogType::kFogDisabled)
         glEnable(GL_FOG);
-        glFogfv(GL_FOG_COLOR, fog_color_.data());
-        glFogf(GL_FOG_START, fog_start_);
-        glFogf(GL_FOG_END, fog_end_);
-        glFogi(GL_FOG_MODE, GL_LINEAR);
-    } else {
+    else
         glDisable(GL_FOG);
+
+    switch (type) {
+        case FogType::kFogLinear:
+            glFogi(GL_FOG_MODE, GL_LINEAR);
+            break;
+        case FogType::kFogExp:
+            glFogi(GL_FOG_MODE, GL_EXP);
+            break;
+        case FogType::kFogExp2:
+            glFogi(GL_FOG_MODE, GL_EXP2);
+            break;
+        default:
+            break;
     }
+}
+
+void Environ::SwitchFog() {
+    SetFogType((FogType)(((int)fog_type_ + 1) % (int)FogType::kFogNTypes));
+}
+
+void Environ::SetFogColor(unsigned int color) {
+    glFogfv(GL_FOG_COLOR, color::UnsignedToFloat3(color).data());
+}
+
+void Environ::SetLinearFog(float start, float end) {
+    glFogf(GL_FOG_START, start);
+    glFogf(GL_FOG_END, end);
+}
+
+void Environ::SetExponentialFog(float density) {
+    glFogf(GL_FOG_DENSITY, density);
 }
 

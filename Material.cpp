@@ -12,37 +12,22 @@
 
 #include "Material.h"
 
-Material::Material() :
-    ambient_{0.3, 0.3, 0.3, 1},
-    diffuse_{1, 1, 1, 1},
-    specular_{0.5, 0.5, 0.5, 1},
-    shininess_(32) {
-}
-
 Material::Material(unsigned int color) :
-    Material() {
+    specular_{0.5, 0.5, 0.5, 1},
+    shininess_{32} {
     SetColor(color);
 }
 
 void Material::SetAmbient(float r, float g, float b, float a) {
-    ambient_[0] = r;
-    ambient_[1] = g;
-    ambient_[2] = b;
-    ambient_[3] = a;
+    ambient_ = {r, g, b, a};
 }
 
 void Material::SetDiffuse(float r, float g, float b, float a) {
-    diffuse_[0] = r;
-    diffuse_[1] = g;
-    diffuse_[2] = b;
-    diffuse_[3] = a;
+    diffuse_ = {r, g, b, a};
 }
 
 void Material::SetSpecular(float r, float g, float b, float a) {
-    specular_[0] = r;
-    specular_[1] = g;
-    specular_[2] = b;
-    specular_[3] = a;
+    specular_ = {r, g, b, a};
 }
 
 void Material::SetColor(unsigned int color) {
@@ -59,9 +44,9 @@ void Material::SetShininess(float shininess) {
 
 void Material::Load() {
     glPushAttrib(GL_LIGHTING_BIT);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_); 
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_.data());
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_.data());
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_.data()); 
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess_); 
 }
 

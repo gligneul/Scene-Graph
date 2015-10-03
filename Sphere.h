@@ -11,6 +11,9 @@
 
 #include "Shape.h"
 
+/**
+ * Unitary sphere centered at origin
+ */
 class Sphere : public Shape {
 public:
     /**

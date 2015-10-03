@@ -9,10 +9,16 @@
 #ifndef ENVIRON_H
 #define ENVIRON_H
 
-#include <array>
-
 class Environ {
 public:
+    enum class FogType {
+        kFogLinear = 0,
+        kFogExp,
+        kFogExp2,
+        kFogDisabled,
+        kFogNTypes
+    };
+
     /**
      * Default constructor
      */
@@ -29,21 +35,32 @@ public:
     void SetAmbient(float r, float g, float b);
 
     /**
-     * Sets the fog
+     * Sets the fog type
      */
-    void SetFog(unsigned int color, float start, float end);
+    void SetFogType(FogType type);
 
     /**
-     * Loads the environment configuration
+     * Switch to the next fog type in the enum
      */
-    void SetupEnvironment();
+    void SwitchFog();
+
+    /**
+     * Set the fog color
+     */
+    void SetFogColor(unsigned int color);
+
+    /**
+     * Sets the linear fog parameters
+     */
+    void SetLinearFog(float start, float end);
+
+    /**
+     * Sets the exponential fog parameters
+     */
+    void SetExponentialFog(float density);
 
 private:
-    std::array<float, 3> backgroud_;
-    std::array<float, 3> ambient_;
-    bool fog_enable_;
-    std::array<float, 3> fog_color_;
-    float fog_start_, fog_end_;
+    FogType fog_type_;
 };
 
 #endif

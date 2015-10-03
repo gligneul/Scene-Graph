@@ -11,7 +11,7 @@
 #include "Sphere.h"
 
 Sphere::Sphere(float radius) :
-    radius_(radius) {
+    radius_{radius} {
 }
 
 void Sphere::Draw() {

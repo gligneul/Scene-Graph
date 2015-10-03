@@ -15,45 +15,31 @@ Light::Light() :
     ambient_{0.2, 0.2, 0.2, 1},
     diffuse_{0.4, 0.4, 0.4, 1},
     specular_{0.4, 0.4, 0.4, 1},
-    spot_enabled_(false),
+    spot_enabled_{false},
     spot_direction_{1, 0, 0},
-    spot_cutoff_(45),
-    spot_exponent_(64) {
+    spot_cutoff_{45},
+    spot_exponent_{64} {
 }
 
 void Light::SetPos(float x, float y, float z, float w) {
-    pos_[0] = x;
-    pos_[1] = y;
-    pos_[2] = z;
-    pos_[3] = w;
+    pos_ = {x, y, z, w};
 }
 
 void Light::SetAmbient(float r, float g, float b, float a) {
-    ambient_[0] = r;
-    ambient_[1] = g;
-    ambient_[2] = b;
-    ambient_[3] = a;
+    ambient_ = {r, g, b, a};
 }
 
 void Light::SetDiffuse(float r, float g, float b, float a) {
-    diffuse_[0] = r;
-    diffuse_[1] = g;
-    diffuse_[2] = b;
-    diffuse_[3] = a;
+    diffuse_ = {r, g, b, a};
 }
 
 void Light::SetSpecular(float r, float g, float b, float a) {
-    specular_[0] = r;
-    specular_[1] = g;
-    specular_[2] = b;
-    specular_[3] = a;
+    specular_ = {r, g, b, a};
 }
 
 void Light::SetupSpot(float x, float y, float z, float cutoff, float exponent) {
     spot_enabled_ = true;
-    spot_direction_[0] = x;
-    spot_direction_[1] = y;
-    spot_direction_[2] = z;
+    spot_direction_ = {x, y, z};
     spot_cutoff_ = cutoff;
     spot_exponent_ = exponent;
 }
@@ -62,13 +48,13 @@ int Light::SetupLight(int light_id) {
     if (!active_)
         return light_id;
 
-    glLightfv(light_id, GL_POSITION, pos_);
-    glLightfv(light_id, GL_AMBIENT, ambient_);
-    glLightfv(light_id, GL_DIFFUSE, diffuse_);
-    glLightfv(light_id, GL_SPECULAR, specular_);
+    glLightfv(light_id, GL_POSITION, pos_.data());
+    glLightfv(light_id, GL_AMBIENT, ambient_.data());
+    glLightfv(light_id, GL_DIFFUSE, diffuse_.data());
+    glLightfv(light_id, GL_SPECULAR, specular_.data());
     
     if (spot_enabled_) {
-        glLightfv(light_id, GL_SPOT_DIRECTION, spot_direction_);
+        glLightfv(light_id, GL_SPOT_DIRECTION, spot_direction_.data());
         glLightf(light_id, GL_SPOT_CUTOFF, spot_cutoff_);
         glLightf(light_id, GL_SPOT_EXPONENT, spot_exponent_);
     }

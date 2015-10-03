@@ -9,7 +9,7 @@
 #include "Node.h"
 
 Node::Node() :
-    active_(true) {
+    active_{true} {
 }
 
 Node::~Node() {

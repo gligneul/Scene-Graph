@@ -31,8 +31,6 @@ void Scene::SetEnviron(std::unique_ptr<Environ> environ) {
 }
 
 void Scene::Render() {
-    environ_->SetupEnvironment();
-
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     float modelView[16];

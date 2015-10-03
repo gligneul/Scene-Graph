@@ -50,7 +50,7 @@ private:
         kNone
     };
 
-    float kZoomScale = 1.0f;
+    const float kZoomScale = 1.0f;
 
     /** Verifies the k_button state and sets the k_operation */
     template<int k_button, Operation k_operation>

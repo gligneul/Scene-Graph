@@ -9,29 +9,25 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
+#include <array>
+
 #include "Appearance.h"
 
 class Material : public Appearance {
 public:
     /**
-     * Default constructor
+     * Constructor
+     * Receives the material color
      */
-    Material();
-
-    /**
-     * Constructor that receives the material color
-     */
-    Material(unsigned int color);
+    Material(unsigned int color = 0x888888);
 
     /**
      * Sets the ambient component
-     * Default = 0.25, 0.25, 0.25, 1.0
      */
     void SetAmbient(float r, float g, float b, float a = 1.0f);
     
     /**
      * Sets the diffuse component
-     * Default = 0.75, 0.75, 0.75, 1.0
      */
     void SetDiffuse(float r, float g, float b, float a = 1.0f);
 
@@ -64,9 +60,9 @@ public:
     void Unload();
 
 private:
-    float ambient_[4];
-    float diffuse_[4];
-    float specular_[4];
+    std::array<float, 4> ambient_;
+    std::array<float, 4> diffuse_;
+    std::array<float, 4> specular_;
     float shininess_;
 };
 

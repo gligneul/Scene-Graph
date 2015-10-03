@@ -11,16 +11,14 @@
 #include "Appearance.h"
 #include "Shape.h"
 
-Entity::Entity() :
-    appearance_(nullptr),
-    shape_(nullptr) {
+Entity::Entity() {
 }
 
-void Entity::SetAppearance(Appearance* appearance) {
+void Entity::SetAppearance(std::shared_ptr<Appearance> appearance) {
     appearance_ = appearance;
 }
 
-void Entity::SetShape(Shape* shape) {
+void Entity::SetShape(std::shared_ptr<Shape> shape) {
     shape_ = shape;
 }
 

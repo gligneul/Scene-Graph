@@ -9,6 +9,8 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
+#include <array>
+
 #include "Node.h"
 
 class Light : public Node {
@@ -55,12 +57,12 @@ public:
     int SetupLight(int light_id);
 
 private:
-    float pos_[4];
-    float ambient_[4];
-    float diffuse_[4];
-    float specular_[4];
+    std::array<float, 4> pos_;
+    std::array<float, 4> ambient_;
+    std::array<float, 4> diffuse_;
+    std::array<float, 4> specular_;
     bool spot_enabled_;
-    float spot_direction_[3];
+    std::array<float, 3> spot_direction_;
     float spot_cutoff_;
     float spot_exponent_;
 };

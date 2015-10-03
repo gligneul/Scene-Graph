@@ -11,10 +11,14 @@
 
 #include "Shape.h"
 
+/**
+ * Unitary cube centered in 0, 0, 0
+ */
 class Cube : public Shape {
 public:
     /**
      * Constructor
+     * Receives the cube dimensions
      */
     Cube(float dx = 1.0f, float dy = 1.0f, float dz = 1.0f);
 

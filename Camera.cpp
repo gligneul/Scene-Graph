@@ -19,28 +19,22 @@ Camera::Camera() :
     eye_{1, 0, 0},
     center_{0, 0, 0},
     up_{0, 1, 0},
-    fovy_(60),
-    znear_(1),
-    zfar_(100),
-    manipulator_(nullptr) {
+    fovy_{60},
+    znear_{1},
+    zfar_{100},
+    manipulator_{} {
 }
 
 void Camera::SetEye(double x, double y, double z) {
-    eye_[0] = x;
-    eye_[1] = y;
-    eye_[2] = z;
+    eye_ = {x, y, z};
 }
 
 void Camera::SetCenter(double x, double y, double z) {
-    center_[0] = x;
-    center_[1] = y;
-    center_[2] = z;
+    center_ =  {x, y, z};
 }
 
 void Camera::SetUp(double x, double y, double z) {
-    up_[0] = x;
-    up_[1] = y;
-    up_[2] = z;
+    up_ = {x, y, z};
 }
 
 void Camera::SetPerspective(double fovy, double znear, double zfar) {
@@ -49,8 +43,8 @@ void Camera::SetPerspective(double fovy, double znear, double zfar) {
     zfar_ = zfar;
 }
 
-void Camera::SetManipular(Manipulator* manipulator) {
-    manipulator_ = manipulator;
+void Camera::SetManipular(std::unique_ptr<Manipulator> manipulator) {
+    manipulator_ = std::move(manipulator);
 }
 
 bool Camera::SetupCamera(float* modelView) {
@@ -76,7 +70,7 @@ bool Camera::SetupCamera(float* modelView) {
     glLoadIdentity();
     gluLookAt(eye_[0], eye_[1], eye_[2], center_[0], center_[1], center_[2],
             up_[0], up_[1], up_[2]);
-    if (manipulator_ != nullptr)
+    if (manipulator_)
         manipulator_->Apply();
     glMultMatrixd(invModelView);
     glGetFloatv(GL_MODELVIEW_MATRIX, modelView);

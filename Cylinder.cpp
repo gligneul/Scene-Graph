@@ -15,11 +15,11 @@
 #include "Cylinder.h"
 
 Cylinder::Cylinder(float base, float top, float height, bool closed) :
-    base_(base),
-    top_(top),
-    height_(height),
-    closed_(closed),
-    quadric_(gluNewQuadric()) {
+    base_{base},
+    top_{top},
+    height_{height},
+    closed_{closed},
+    quadric_{gluNewQuadric()} {
 }
 
 Cylinder::~Cylinder() {

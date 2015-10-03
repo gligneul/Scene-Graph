@@ -9,6 +9,7 @@
 #ifndef GROUP_H
 #define GROUP_H
 
+#include <memory>
 #include <vector>
 
 #include "Node.h"
@@ -26,7 +27,7 @@ public:
     /**
      * Adds a node to the group
      */
-    void AddNode(Node* node);
+    void AddNode(std::shared_ptr<Node> node);
 
     /**
      * Sets the camera
@@ -49,7 +50,7 @@ public:
 
 private:
     /** Group's children */
-    std::vector<Node*> nodes_;
+    std::vector<std::shared_ptr<Node>> nodes_;
 };
 
 #endif

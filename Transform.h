@@ -9,6 +9,8 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
+#include <memory>
+
 #include "Group.h"
 
 class Manipulator;
@@ -51,7 +53,7 @@ public:
     /**
      * Sets the manipulator that will be loaded after the transformation
      */
-    void SetManipulator(Manipulator* manipulator);
+    void SetManipulator(std::unique_ptr<Manipulator> manipulator);
 
     /**
      * Sets the lights
@@ -66,7 +68,7 @@ public:
     void Render();
 
 private:
-    Manipulator* manipulator_;
+    std::unique_ptr<Manipulator> manipulator_;
     float matrix_[16];
 };
 

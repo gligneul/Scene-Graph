@@ -13,10 +13,14 @@
 
 class GLUquadric;
 
+/**
+ * Cylinder that start at z = 0 and goes up to z = height
+ */
 class Cylinder : public Shape {
 public:
     /**
      * Constructor
+     * 
      */
     Cylinder(float base = 1.0f, float top = 1.0f, float height = 1.0f,
             bool closed = true);

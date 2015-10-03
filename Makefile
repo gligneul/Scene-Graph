@@ -23,18 +23,17 @@ clean:
 	@rm -rf *.o $(target)
 
 %.o: %.cpp
-	@echo "$@: $^"
 	$(cc) $(cflags) -c -o $@ $<
 
 # Dendencies (use 'make depend' to update)
 Mesh.o: Mesh.cpp vec3.h Mesh.h Shape.h
-Group.o: Group.cpp Group.h Node.h
+color.o: color.cpp color.h
 Scene.o: Scene.cpp Environ.h Scene.h Group.h Node.h
 Sphere.o: Sphere.cpp Sphere.h Shape.h
 Environ.o: Environ.cpp color.h Environ.h
 Transform.o: Transform.cpp Manipulator.h Transform.h Group.h Node.h
 lodepng.o: lodepng.cpp lodepng.h
-color.o: color.cpp color.h
+Group.o: Group.cpp Group.h Node.h
 Texture.o: Texture.cpp lodepng.h Texture.h Appearance.h
 Material.o: Material.cpp color.h Material.h Appearance.h
 Light.o: Light.cpp Light.h Node.h

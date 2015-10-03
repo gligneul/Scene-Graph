@@ -12,7 +12,7 @@
 #include "Transform.h"
 
 Transform::Transform() :
-    manipulator_(nullptr) {
+    manipulator_{nullptr} {
     LoadIndentity();
 }
 
@@ -57,15 +57,15 @@ bool Transform::SetupCamera(float* modelView) {
 
     glPushMatrix();
     glMultMatrixf(matrix_);
-    if (manipulator_ != nullptr)
+    if (manipulator_)
         manipulator_->Apply();
     bool cameraSet = Group::SetupCamera(modelView);
     glPopMatrix();
     return cameraSet;
 }
 
-void Transform::SetManipulator(Manipulator* manipulator) {
-    manipulator_ = manipulator;
+void Transform::SetManipulator(std::unique_ptr<Manipulator> manipulator) {
+    manipulator_ = std::move(manipulator);
 }
 
 int Transform::SetupLight(int light_id) {

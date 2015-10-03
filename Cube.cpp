@@ -11,9 +11,9 @@
 #include "Cube.h"
 
 Cube::Cube(float dx, float dy, float dz) :
-    dx_(dx),
-    dy_(dy),
-    dz_(dz) {
+    dx_{dx},
+    dy_{dy},
+    dz_{dz} {
 }
 
 void Cube::SetDimensions(float dx, float dy, float dz) {
