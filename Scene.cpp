@@ -16,14 +16,6 @@
 
 Scene::Scene() :
     environ_{nullptr} {
-
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_NORMALIZE);
-    glEnable(GL_LIGHTING);
-    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
-    for (int i = 0; i < 8; i++)
-        glEnable(GL_LIGHT0 + i);
 }
 
 void Scene::SetEnviron(std::unique_ptr<Environ> environ) {
@@ -31,6 +23,15 @@ void Scene::SetEnviron(std::unique_ptr<Environ> environ) {
 }
 
 void Scene::Render() {
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_NORMALIZE);
+    glEnable(GL_LIGHTING);
+    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
+
+    if (environ_)
+        environ_->Load();
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     float modelView[16];
@@ -42,5 +43,8 @@ void Scene::Render() {
     glLoadMatrixf(modelView);
     SetupLight(GL_LIGHT0);
     Group::Render();
+
+    if (environ_)
+        environ_->Unload();
 }
 

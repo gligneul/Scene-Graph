@@ -48,6 +48,7 @@ int Light::SetupLight(int light_id) {
     if (!active_)
         return light_id;
 
+    glEnable(light_id);
     glLightfv(light_id, GL_POSITION, pos_.data());
     glLightfv(light_id, GL_AMBIENT, ambient_.data());
     glLightfv(light_id, GL_DIFFUSE, diffuse_.data());

@@ -305,7 +305,7 @@ std::tuple<std::shared_ptr<Node>, std::shared_ptr<Camera>, Manipulator*>
     cone_t->AddNode(light_t);
 
     auto light = std::make_shared<Light>();
-    light->SetupSpot(0, 0, 1, 26.5, 0);
+    light->SetupSpot(0, 0, 1, 26.5, 64);
     light_t->AddNode(light);
 
     auto camera_t = std::make_shared<Transform>();

@@ -9,6 +9,8 @@
 #ifndef ENVIRON_H
 #define ENVIRON_H
 
+#include <array>
+
 class Environ {
 public:
     enum class FogType {
@@ -59,8 +61,22 @@ public:
      */
     void SetExponentialFog(float density);
 
+    /**
+     * Loads the enviroment
+     */
+    void Load();
+
+    /**
+     * Unloads the enviroment
+     */
+    void Unload();
+
 private:
+    std::array<float, 3> background_;
+    std::array<float, 3> ambient_;
     FogType fog_type_;
+    std::array<float, 3> fog_color_;
+    float fog_start_, fog_end_, fog_density_;
 };
 
 #endif
