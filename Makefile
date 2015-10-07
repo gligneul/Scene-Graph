@@ -26,23 +26,23 @@ clean:
 	$(cc) $(cflags) -c -o $@ $<
 
 # Dendencies (use 'make depend' to update)
-Mesh.o: Mesh.cpp vec3.h Mesh.h Shape.h
+Camera.o: Camera.cpp Camera.h Node.h Manipulator.h
 color.o: color.cpp color.h
-Scene.o: Scene.cpp Environ.h Scene.h Group.h Node.h
-Sphere.o: Sphere.cpp Sphere.h Shape.h
-Environ.o: Environ.cpp color.h Environ.h
-Transform.o: Transform.cpp Manipulator.h Transform.h Group.h Node.h
-lodepng.o: lodepng.cpp lodepng.h
-Group.o: Group.cpp Group.h Node.h
-Texture.o: Texture.cpp lodepng.h Texture.h Appearance.h
-Material.o: Material.cpp color.h Material.h Appearance.h
-Light.o: Light.cpp Light.h Node.h
 Cube.o: Cube.cpp Cube.h Shape.h
 Cylinder.o: Cylinder.cpp Cylinder.h Shape.h
 Entity.o: Entity.cpp Entity.h Node.h Appearance.h Shape.h
-Manipulator.o: Manipulator.cpp Manipulator.h vec3.h
+Environ.o: Environ.cpp color.h Environ.h
+Group.o: Group.cpp Group.h Node.h
+Light.o: Light.cpp Light.h Node.h
+lodepng.o: lodepng.cpp lodepng.h
 main.o: main.cpp Camera.h Node.h Cube.h Shape.h Cylinder.h Entity.h \
  Environ.h Light.h Manipulator.h Material.h Appearance.h Mesh.h vec3.h \
  Scene.h Group.h Sphere.h Texture.h Transform.h
+Manipulator.o: Manipulator.cpp Manipulator.h vec3.h
+Material.o: Material.cpp color.h Material.h Appearance.h
+Mesh.o: Mesh.cpp vec3.h Mesh.h Shape.h
 Node.o: Node.cpp Node.h
-Camera.o: Camera.cpp Camera.h Node.h Manipulator.h
+Scene.o: Scene.cpp Environ.h Scene.h Group.h Node.h
+Sphere.o: Sphere.cpp Sphere.h Shape.h
+Texture.o: Texture.cpp lodepng.h Texture.h Appearance.h
+Transform.o: Transform.cpp Manipulator.h Transform.h Group.h Node.h
