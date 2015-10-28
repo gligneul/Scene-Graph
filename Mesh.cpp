@@ -29,21 +29,15 @@ Mesh::Mesh(const std::string& path) :
     ReadFile(path, vertices_, indices_);
     NormalizeVertices(vertices_);
     CalculateNormals(vertices_, indices_, normals_);
-#ifdef ENABLE_VBO
-    std::cout << "VBO enabled\n";
     InitializeVBO(vertices_, normals_, indices_);
-#endif
 }
 
 Mesh::~Mesh() {
-#ifdef ENABLE_VBO
     if (vbo_[0] != 0)
         glDeleteBuffers(2, vbo_);
-#endif
 }
 
 void Mesh::Draw() {
-#ifdef ENABLE_VBO
     glBindBuffer(GL_ARRAY_BUFFER, vbo_[0]);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_[1]);
 
@@ -59,14 +53,6 @@ void Mesh::Draw() {
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-#else
-    glBegin(GL_TRIANGLES);
-    for (size_t i = 0; i < indices_.size(); ++i) {
-        glNormal3fv(normals_.data() + 3 * indices_[i]);
-        glVertex3fv(vertices_.data() + 3 * indices_[i]);
-    }
-    glEnd();
-#endif
 }
 
 vec3::Vf Mesh::GetVertex(unsigned int index, const float vertices[]) {

@@ -17,8 +17,6 @@
 
 #include "Shape.h"
 
-#define ENABLE_VBO
-
 class Mesh : public Shape {
 public:
     /**
