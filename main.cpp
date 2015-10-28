@@ -142,7 +142,7 @@ static void CreateScene() {
 
     curr_manipulator = global_manipulator = new Manipulator();
     global_manipulator->SetReferencePoint(0, 100, 0);
-    global_camera->SetManipular(
+    global_camera->SetManipulator(
             std::unique_ptr<Manipulator>(global_manipulator));
 
     auto light_t = std::make_shared<Transform>();

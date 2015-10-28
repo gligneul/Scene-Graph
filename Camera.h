@@ -53,7 +53,7 @@ public:
     /**
      * Sets the manipulator
      */
-    void SetManipular(std::unique_ptr<Manipulator> manipulator);
+    void SetManipulator(std::unique_ptr<Manipulator> manipulator);
 
     /**
      * Sets the camera

@@ -41,7 +41,7 @@ void Camera::SetPerspective(double fovy, double znear, double zfar) {
     zfar_ = zfar;
 }
 
-void Camera::SetManipular(std::unique_ptr<Manipulator> manipulator) {
+void Camera::SetManipulator(std::unique_ptr<Manipulator> manipulator) {
     manipulator_ = std::move(manipulator);
 }
 
