@@ -41,9 +41,9 @@ void Manipulator::Apply() {
 }
 
 void Manipulator::ApplyInv() {
-    glTranslatef(reference_[0], reference_[1], reference_[2]);
-    glMultMatrixf(inv_.data());
     glTranslatef(-reference_[0], -reference_[1], -reference_[2]);
+    glMultMatrixf(inv_.data());
+    glTranslatef(reference_[0], reference_[1], reference_[2]);
 }
 
 void Manipulator::SetReferencePoint(float x, float y, float z) {
