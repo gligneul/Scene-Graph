@@ -34,7 +34,7 @@ public:
      * Receives the reference to the output modelView
      * Returns true if the camera has been set
      */
-    virtual bool SetupCamera(float* modelView);
+    virtual bool SetupCamera();
 
     /**
      * Sets the lights

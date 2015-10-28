@@ -13,6 +13,7 @@
 #include <GL/glut.h>
 
 #include "Manipulator.h"
+#include "invertMatrix.h"
 #include "vec3.h"
 
 Manipulator::Manipulator() :
@@ -21,6 +22,10 @@ Manipulator::Manipulator() :
             0, 1, 0, 0,
             0, 0, 1, 0,
             0, 0, 0, 1},
+    inv_{1, 0, 0, 0,
+         0, 1, 0, 0,
+         0, 0, 1, 0,
+         0, 0, 0, 1},
     operation_{Operation::kNone},
     x_{0},
     y_{0},
@@ -32,6 +37,12 @@ Manipulator::Manipulator() :
 void Manipulator::Apply() {
     glTranslatef(reference_[0], reference_[1], reference_[2]);
     glMultMatrixf(matrix_.data());
+    glTranslatef(-reference_[0], -reference_[1], -reference_[2]);
+}
+
+void Manipulator::ApplyInv() {
+    glTranslatef(reference_[0], reference_[1], reference_[2]);
+    glMultMatrixf(inv_.data());
     glTranslatef(-reference_[0], -reference_[1], -reference_[2]);
 }
 
@@ -74,6 +85,7 @@ void Manipulator::GlutMotion(int x, int y) {
 
     glMultMatrixf(matrix_.data());
     glGetFloatv(GL_MODELVIEW_MATRIX, matrix_.data());
+    gluInvertMatrix(matrix_.data(), inv_.data());
     glPopMatrix();
 
     x_ = x;

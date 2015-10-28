@@ -45,10 +45,9 @@ public:
 
     /**
      * Sets the camera
-     * Receives the reference to the output modelView
      * Returns true if the camera has been set
      */
-    bool SetupCamera(float* modelView);
+    bool SetupCamera();
 
     /**
      * Sets the manipulator that will be loaded after the transformation
@@ -68,8 +67,15 @@ public:
     void Render();
 
 private:
+    /**
+     * Auxiliar functions for opengl matrix stack
+     */
+    void pushMatrix();
+    void popMatrix();
+
     std::unique_ptr<Manipulator> manipulator_;
     float matrix_[16];
+    float inv_[16];
 };
 
 #endif

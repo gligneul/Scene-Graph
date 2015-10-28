@@ -57,10 +57,9 @@ public:
 
     /**
      * Sets the camera
-     * Receives the reference to the output modelView
      * Returns true if the camera has been set
      */
-    bool SetupCamera(float* modelView);
+    bool SetupCamera();
 
 private:
     std::array<double, 3> eye_;

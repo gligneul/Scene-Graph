@@ -10,6 +10,8 @@
 
 #include "Manipulator.h"
 #include "Transform.h"
+#include "invertMatrix.h"
+
 
 Transform::Transform() :
     manipulator_{nullptr} {
@@ -17,51 +19,40 @@ Transform::Transform() :
 }
 
 void Transform::LoadIndentity() {
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
+    pushMatrix();
     glLoadIdentity();
-    glGetFloatv(GL_MODELVIEW_MATRIX, matrix_);
-    glPopMatrix();
+    popMatrix();
 }
 
 void Transform::Rotate(float angle, float x, float y, float z) {
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadMatrixf(matrix_);
+    pushMatrix();
     glRotatef(angle, x, y, z);
-    glGetFloatv(GL_MODELVIEW_MATRIX, matrix_);
-    glPopMatrix();
+    popMatrix();
 }
 
 void Transform::Translate(float x, float y, float z) {
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadMatrixf(matrix_);
+    pushMatrix();
     glTranslatef(x, y, z);
-    glGetFloatv(GL_MODELVIEW_MATRIX, matrix_);
-    glPopMatrix();
+    popMatrix();
 }
 
 void Transform::Scale(float x, float y, float z) {
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadMatrixf(matrix_);
+    pushMatrix();
     glScalef(x, y, z);
-    glGetFloatv(GL_MODELVIEW_MATRIX, matrix_);
-    glPopMatrix();
+    popMatrix();
 }
 
-bool Transform::SetupCamera(float* modelView) {
+bool Transform::SetupCamera() {
     if (!active_)
         return false;
 
-    glPushMatrix();
-    glMultMatrixf(matrix_);
-    if (manipulator_)
-        manipulator_->Apply();
-    bool cameraSet = Group::SetupCamera(modelView);
-    glPopMatrix();
-    return cameraSet;
+    if (Group::SetupCamera()) {
+        if (manipulator_)
+            manipulator_->ApplyInv();
+        glMultMatrixf(inv_);
+        return true;
+    }
+    return false;
 }
 
 void Transform::SetManipulator(std::unique_ptr<Manipulator> manipulator) {
@@ -91,5 +82,17 @@ void Transform::Render() {
         manipulator_->Apply();
     Group::Render();
     glPopMatrix();
+}
+
+void Transform::pushMatrix() {
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadMatrixf(matrix_);
+}
+
+void Transform::popMatrix() {
+    glGetFloatv(GL_MODELVIEW_MATRIX, matrix_);
+    glPopMatrix();
+    gluInvertMatrix(matrix_, inv_);
 }
 

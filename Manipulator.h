@@ -24,6 +24,11 @@ public:
     void Apply();
 
     /**
+     * Accumulates the inverse of the manipulator matrix
+     */
+    void ApplyInv();
+
+    /**
      * Sets the reference point (world center)
      */
     void SetReferencePoint(float x, float y, float z);
@@ -61,6 +66,7 @@ private:
 
     std::array<float, 3> reference_;
     std::array<float, 16> matrix_;
+    std::array<float, 16> inv_;
     Operation operation_;
     float x_, y_;
     std::array<float, 3> v_;

@@ -15,10 +15,10 @@ void Group::AddNode(std::shared_ptr<Node> node) {
     nodes_.push_back(node);
 }
 
-bool Group::SetupCamera(float* modelView) {
+bool Group::SetupCamera() {
     if (active_)
         for (auto& node : nodes_)
-            if (node->SetupCamera(modelView))
+            if (node->SetupCamera())
                 return true;
     return false;
 }

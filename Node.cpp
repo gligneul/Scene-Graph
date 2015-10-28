@@ -15,8 +15,7 @@ Node::Node() :
 Node::~Node() {
 }
 
-bool Node::SetupCamera(float* modelView) {
-    (void)modelView;
+bool Node::SetupCamera() {
     return false;
 }
 

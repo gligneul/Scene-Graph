@@ -32,15 +32,11 @@ void Scene::Render() {
     if (environ_)
         environ_->Load();
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    float modelView[16];
-    if (!SetupCamera(modelView))
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+
+    if (!SetupCamera())
         throw std::runtime_error("Scene::Render(): Camera not found");
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf(modelView);
     SetupLight(GL_LIGHT0);
     Group::Render();
 
