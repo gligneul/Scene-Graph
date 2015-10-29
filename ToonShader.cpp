@@ -7,6 +7,7 @@
  */
 
 #include <fstream>
+#include <iostream>
 #include <stdexcept>
 
 #include <GL/glew.h>
@@ -39,6 +40,10 @@ void ToonShader::Load() {
     glGetFloatv(GL_PROJECTION_MATRIX, projection);
     GLuint projection_location = glGetUniformLocation(program_, "projection");
     glUniformMatrix4fv(projection_location, 1, GL_FALSE, projection);
+
+    float color[3] = {0.5, 0, 0.5};
+    GLuint color_location = glGetUniformLocation(program_, "color");
+    glUniform3fv(color_location, 1, color);
 }
 
 void ToonShader::Unload() {
@@ -64,6 +69,16 @@ unsigned int ToonShader::LoadShader(int shader_type, const char *path) {
     auto shader = glCreateShader(shader_type);
     glShaderSource(shader, 1, &shader_ptr, NULL);
     glCompileShader(shader);
+    GLint success = 0;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        GLint length = 0;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+        char log[length];
+        glGetShaderInfoLog(shader, length, &length, log);
+        glDeleteShader(shader);
+        std::cerr << "Error: " << log << "\n";
+    }
     return shader;
 }
 
