@@ -26,6 +26,7 @@
 #include "Scene.h"
 #include "Sphere.h"
 #include "Texture.h"
+#include "ToonShader.h"
 #include "Transform.h"
 
 /* Scene nodes */
@@ -53,6 +54,7 @@ int main(int argc, char* argv[]) {
         std::cerr << "Error: " << glewGetErrorString(err) << "\n";
         exit(1);
     }
+    ToonShader::Init();
     CreateScene();
     glutMainLoop();
     return 0; 
@@ -104,7 +106,7 @@ static void CreateScene() {
     light_t->AddNode(light);
 
     auto bunny = std::make_shared<Entity>();
-    bunny->SetAppearance(std::make_shared<Material>(0xF6F6E2));
+    bunny->SetAppearance(std::make_shared<ToonShader>());
     bunny->SetShape(std::make_shared<Mesh>("bunny.off"));
     scene->AddNode(bunny);
 }
