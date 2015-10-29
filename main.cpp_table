@@ -135,7 +135,7 @@ static void CreateScene() {
 
     auto global_camera_ptr = std::make_shared<Camera>();
     global_camera = global_camera_ptr.get();
-    global_camera->SetEye(130, 200, 130);
+    global_camera->SetEye(0, 100, 100);
     global_camera->SetCenter(0, 100, 0);
     global_camera->SetPerspective(50, 5, 500);
     scene->AddNode(global_camera_ptr);

@@ -11,7 +11,6 @@
 #include <iostream>
 
 #include <GL/glew.h>
-#include <GL/gl.h>
 #include <GL/glut.h>
 
 #include "Camera.h"
@@ -54,7 +53,7 @@ int main(int argc, char* argv[]) {
         std::cerr << "Error: " << glewGetErrorString(err) << "\n";
         exit(1);
     }
-    ToonShader::Init();
+    ToonShader::Init(); // TODO remover init daqui
     CreateScene();
     glutMainLoop();
     return 0; 
@@ -90,7 +89,7 @@ static void CreateScene() {
     scene = new Scene();
 
     auto camera = std::make_shared<Camera>();
-    camera->SetEye(-1, 0, 0);
+    camera->SetEye(0, 0, 1);
     camera->SetCenter(0, 0, 0);
     camera->SetPerspective(50, 0.05, 5);
     scene->AddNode(camera);
@@ -109,5 +108,10 @@ static void CreateScene() {
     bunny->SetAppearance(std::make_shared<ToonShader>());
     bunny->SetShape(std::make_shared<Mesh>("bunny.off"));
     scene->AddNode(bunny);
+
+    auto cube = std::make_shared<Entity>();
+    cube->SetAppearance(std::make_shared<Material>(0xFFFFFF));
+    cube->SetShape(std::make_shared<Cube>(0.3, 0.3, 0.3));
+    scene->AddNode(cube);
 }
 
