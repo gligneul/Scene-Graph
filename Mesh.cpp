@@ -27,9 +27,8 @@ Mesh::Mesh(const std::string& path) :
     std::vector<float> vertices;
     std::vector<float> normals;
     std::vector<unsigned int> indices;
-    ReadFile(path, vertices, indices);
+    ReadFile(path, vertices, normals, indices);
     NormalizeVertices(vertices);
-    CalculateNormals(vertices, indices, normals);
     InitializeVBO(vertices, normals, indices);
 }
 
@@ -62,6 +61,19 @@ void Mesh::SetVertex(unsigned int index, float vertices[],
 }
 
 void Mesh::ReadFile(const std::string& path, std::vector<float>& vertices,
+        std::vector<float>& normals, std::vector<unsigned int>& indices) {
+    std::string extension = path.substr(path.rfind('.'));
+    if (extension == ".off") {
+        ReadOFF(path, vertices, indices);
+        CalculateNormals(vertices, indices, normals);
+    } else if (extension == ".msh") {
+        ReadMSH(path, vertices, normals, indices);
+    } else {
+        throw std::runtime_error("Unknown mesh extension: " + extension);
+    }
+}
+
+void Mesh::ReadOFF(const std::string& path, std::vector<float>& vertices,
         std::vector<unsigned int>& indices) {
     std::ifstream input;
     input.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -95,6 +107,38 @@ void Mesh::ReadFile(const std::string& path, std::vector<float>& vertices,
             indices[idx++] = quad[3];
             indices[idx++] = quad[0];
         }
+    }
+}
+
+void Mesh::ReadMSH(const std::string& path, std::vector<float>& vertices,
+        std::vector<float>& normals, std::vector<unsigned int>& indices) {
+    std::ifstream input;
+    input.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    input.open(path);
+
+    size_t nVertices, nTriangles;
+    input >> nVertices >> nTriangles;
+
+    vertices.resize(nVertices * 3);
+    normals.resize(nVertices * 3);
+    for (size_t i = 0; i < nVertices; ++i) {
+        int id;
+        input >> id;
+        input >> vertices[3 * i]
+              >> vertices[3 * i + 1]
+              >> vertices[3 * i + 2];
+        input >> normals[3 * i]
+              >> normals[3 * i + 1]
+              >> normals[3 * i + 2];
+    }
+
+    indices.resize(nTriangles * 3);
+    for (size_t i = 0; i < nTriangles; ++i) {
+        int id;
+        input >> id;
+        input >> indices[3 * i]
+              >> indices[3 * i + 1]
+              >> indices[3 * i + 2];
     }
 }
 

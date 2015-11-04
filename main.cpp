@@ -106,12 +106,14 @@ static void CreateScene() {
 
     auto bunny = std::make_shared<Entity>();
     bunny->SetAppearance(std::make_shared<ToonShader>());
-    bunny->SetShape(std::make_shared<Mesh>("bunny.off"));
+    bunny->SetShape(std::make_shared<Mesh>("data/bunny.msh"));
     scene->AddNode(bunny);
 
+#if 0
     auto cube = std::make_shared<Entity>();
     cube->SetAppearance(std::make_shared<Material>(0xFFFFFF));
-    cube->SetShape(std::make_shared<Cube>(0.3, 0.3, 0.3));
+    cube->SetShape(std::make_shared<Mesh>("data/cube.msh"));
     scene->AddNode(cube);
+#endif
 }
 

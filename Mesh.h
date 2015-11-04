@@ -52,7 +52,19 @@ private:
      * Reads the vertex information and the point information from file
      */
     void ReadFile(const std::string& path, std::vector<float>& vertices,
+            std::vector<float>& normals, std::vector<unsigned int>& indices);
+
+    /**
+     * Reads a .off file
+     */
+    void ReadOFF(const std::string& path, std::vector<float>& vertices,
             std::vector<unsigned int>& indices);
+
+    /**
+     * Reads a .msh file
+     */
+    void ReadMSH(const std::string& path, std::vector<float>& vertices,
+            std::vector<float>& normals, std::vector<unsigned int>& indices);
 
     /**
      * Normalize the mesh in the range -0.5, 0.5 and center it in 0, 0, 0
