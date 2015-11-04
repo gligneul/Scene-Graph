@@ -36,13 +36,10 @@ Transform.o: Transform.cpp Manipulator.h Transform.h Group.h Node.h \
 Camera.o: Camera.cpp Camera.h Node.h Manipulator.h
 invertMatrix.o: invertMatrix.cpp invertMatrix.h
 Group.o: Group.cpp Group.h Node.h
-Texture.o: Texture.cpp lodepng.h Texture.h Appearance.h
-Material.o: Material.cpp color.h Material.h Appearance.h
 Light.o: Light.cpp Light.h Node.h
 Entity.o: Entity.cpp Entity.h Node.h Appearance.h Shape.h
 ToonShader.o: ToonShader.cpp ToonShader.h Appearance.h
 main.o: main.cpp Camera.h Node.h Entity.h Environ.h Light.h Manipulator.h \
- Material.h Appearance.h Mesh.h vec3.h Shape.h Scene.h Group.h Texture.h \
- ToonShader.h Transform.h
+ Appearance.h Mesh.h vec3.h Shape.h Scene.h Group.h ToonShader.h Transform.h
 lodepng.o: lodepng.cpp lodepng.h
 Node.o: Node.cpp Node.h

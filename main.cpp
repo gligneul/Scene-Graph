@@ -18,10 +18,8 @@
 #include "Environ.h"
 #include "Light.h"
 #include "Manipulator.h"
-#include "Material.h"
 #include "Mesh.h"
 #include "Scene.h"
-#include "Texture.h"
 #include "ToonShader.h"
 #include "Transform.h"
 
