@@ -14,8 +14,6 @@
 #include <GL/glut.h>
 
 #include "Camera.h"
-#include "Cube.h"
-#include "Cylinder.h"
 #include "Entity.h"
 #include "Environ.h"
 #include "Light.h"
@@ -23,7 +21,6 @@
 #include "Material.h"
 #include "Mesh.h"
 #include "Scene.h"
-#include "Sphere.h"
 #include "Texture.h"
 #include "ToonShader.h"
 #include "Transform.h"
