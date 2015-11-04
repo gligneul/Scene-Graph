@@ -73,14 +73,9 @@ private:
             const std::vector<float>& normals,
             const std::vector<unsigned int> indices);
 
-    unsigned int vbo_[2];
-    unsigned int vertices_offset_;
-    unsigned int normals_offset_;
-    unsigned int n_vertices_;
-
-    std::vector<float> vertices_;
-    std::vector<float> normals_;
-    std::vector<unsigned int> indices_;
+    unsigned int vbo_[3];
+    unsigned int vao_;
+    unsigned int n_indices_;
 };
 
 #endif
