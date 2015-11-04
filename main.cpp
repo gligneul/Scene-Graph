@@ -98,7 +98,7 @@ static void CreateScene() {
     camera->SetManipulator(std::unique_ptr<Manipulator>(manipulator));
 
     auto light_t = std::make_shared<Transform>();
-    light_t->Translate(0, 2, 0);
+    light_t->Translate(0, 3, 0);
     scene->AddNode(light_t);
 
     auto light = std::make_shared<Light>();

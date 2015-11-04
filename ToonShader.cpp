@@ -31,6 +31,9 @@ ToonShader::ToonShader() {
 void ToonShader::Load() {
     glUseProgram(program_);
 
+    glBindAttribLocation(program_, 0, "position");
+    glBindAttribLocation(program_, 1, "normal");
+
     float modelview[16];
     glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
     GLuint modelview_location = glGetUniformLocation(program_, "modelview");
