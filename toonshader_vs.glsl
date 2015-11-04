@@ -6,7 +6,7 @@
  * Trabalho - Projeto de Grafo de Cena
  */
 
-#version 130
+#version 150
 
 in vec3 gl_Vertex;
 in vec3 gl_Normal;
@@ -21,7 +21,8 @@ void main () {
 
     vec4 global_position = modelview * vec4(gl_Vertex, 1.0);
 
-    vec3 global_normal = normalize(vec3(modelview * vec4(gl_Normal, 1.0)));
+    mat4 normalmatrix = transpose(inverse(modelview));
+    vec3 global_normal = normalize(vec3(normalmatrix * vec4(gl_Normal, 1.0)));
 
     vec3 l = normalize(vec3(light_position - global_position));
 
