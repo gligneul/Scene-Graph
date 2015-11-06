@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cmath>
 
+#include <glm/glm.hpp>
 #include <GL/gl.h>
 #include <GL/glut.h>
 

@@ -6,6 +6,7 @@
 
 cc=g++
 cflags=-O0 -g -Wall -Wextra -Werror -std=c++11
+iflags=-I./lib
 lflags=-lGL -lGLU -lGLEW -lglut
 target=scenegraph
 src=$(wildcard *.cpp)
@@ -23,7 +24,7 @@ clean:
 	@rm -rf *.o $(target)
 
 %.o: %.cpp
-	$(cc) $(cflags) -c -o $@ $<
+	$(cc) $(cflags) $(iflags) -c -o $@ $<
 
 # Dendencies (use 'make depend' to update)
 Mesh.o: Mesh.cpp vec3.h Mesh.h
