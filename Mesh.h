@@ -3,7 +3,7 @@
  * INF1339 - Computação Gráfica Tridimensional
  * Professor: Waldemar Celes
  * Gabriel de Quadros Ligneul 1212560
- * Trabalho - Projeto de Grafo de Cena
+ * Trabalho - Projeto Final
  */
 
 #ifndef MESH_H

@@ -3,7 +3,7 @@
  * INF1339 - Computação Gráfica Tridimensional
  * Professor: Waldemar Celes
  * Gabriel de Quadros Ligneul 1212560
- * Trabalho - Projeto de Grafo de Cena
+ * Trabalho - Projeto Final
  */
 
 #include <fstream>
@@ -16,17 +16,13 @@
 
 ShaderProgram::ShaderProgram(const std::string& prefix) :
     program_(glCreateProgram()) {
-    auto vs = LoadShader(GL_VERTEX_SHADER, prefix + "_vs.glsl"); 
-    auto fs = LoadShader(GL_FRAGMENT_SHADER, prefix + "_fs.glsl");
-    glAttachShader(program_, fs);
-    glAttachShader(program_, vs);
-
-    // TODO: verify link errors
-    glLinkProgram(program_);
+    CompileShader(GL_VERTEX_SHADER, prefix + "_vs.glsl"); 
+    CompileShader(GL_FRAGMENT_SHADER, prefix + "_fs.glsl");
+    LinkShader();
 }
 
 ShaderProgram::~ShaderProgram() {
-    // TODO: destroy shader
+    glDeleteProgram(program_);
 }
 
 unsigned int ShaderProgram::GetHandle() {
@@ -46,12 +42,11 @@ std::string ShaderProgram::ReadFile(const std::string& path) {
     return output;
 }
 
-unsigned int ShaderProgram::LoadShader(int shader_type,
-        const std::string& path) {
+void ShaderProgram::CompileShader(int shader_type, const std::string& path) {
     auto shader_str = ReadFile(path);
-    auto shader_ptr = shader_str.c_str();
+    auto shader_cstr = shader_str.c_str();
     auto shader = glCreateShader(shader_type);
-    glShaderSource(shader, 1, &shader_ptr, NULL);
+    glShaderSource(shader, 1, &shader_cstr, NULL);
     glCompileShader(shader);
     GLint success = 0;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
@@ -61,8 +56,21 @@ unsigned int ShaderProgram::LoadShader(int shader_type,
         char log[length];
         glGetShaderInfoLog(shader, length, &length, log);
         glDeleteShader(shader);
-        std::cerr << "Error: " << log << "\n";
+        throw std::runtime_error(log);
     }
-    return shader;
+    glAttachShader(program_, shader);
+}
+
+void ShaderProgram::LinkShader() {
+    glLinkProgram(program_);
+    GLint success = 0;
+    glGetShaderiv(program_, GL_LINK_STATUS, &success);
+    if (!success) {
+        GLint length = 0;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+        char log[length];
+        glGetShaderInfoLog(shader, length, &length, log);
+        throw std::runtime_error(log);
+    }
 }
 

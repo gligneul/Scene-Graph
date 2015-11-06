@@ -3,7 +3,7 @@
  * INF1339 - Computação Gráfica Tridimensional
  * Professor: Waldemar Celes
  * Gabriel de Quadros Ligneul 1212560
- * Trabalho - Projeto de Grafo de Cena
+ * Trabalho - Projeto Final
  */
 
 #ifndef SHADERPROGRAM_H
@@ -38,7 +38,12 @@ private:
     /**
      * Loads and compiles a shader from a file
      */
-    unsigned int LoadShader(int shader_type, const std::string& path);
+    void CompileShader(int shader_type, const std::string& path);
+
+    /**
+     * Links the shader program
+     */
+    void LinkShader();
 
     unsigned int program_;
 };

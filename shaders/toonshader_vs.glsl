@@ -3,7 +3,7 @@
  * INF1339 - Computação Gráfica Tridimensional
  * Professor: Waldemar Celes
  * Gabriel de Quadros Ligneul 1212560
- * Trabalho - Projeto de Grafo de Cena
+ * Trabalho - Projeto Final
  */
 
 #version 130
@@ -15,8 +15,8 @@ uniform mat4 modelview;
 uniform mat4 normalmatrix;
 uniform mat4 mvp;
 
-smooth out vec3 frag_light;
-smooth out vec3 frag_normal;
+out vec3 frag_light;
+out vec3 frag_normal;
 
 void main () {
     vec3 light_position = vec3(modelview * vec4(0, 3, 0, 1));
