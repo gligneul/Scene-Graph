@@ -15,19 +15,15 @@ uniform mat4 modelview;
 uniform mat4 normalmatrix;
 uniform mat4 mvp;
 
-out float light_intensity;
+smooth out vec3 frag_light;
+smooth out vec3 frag_normal;
 
 void main () {
-    vec4 light_position = modelview * vec4(0.0, 3.0, 0.0, 1.0);
+    vec3 light_position = vec3(modelview * vec4(0, 3, 0, 1));
 
-    vec4 global_position = modelview * vec4(position, 1.0);
-
-    vec3 global_normal = normalize(vec3(normalmatrix * vec4(normal, 1.0)));
-
-    vec3 l = normalize(vec3(light_position - global_position));
-
-    light_intensity = 0.2 + clamp(dot(global_normal, l), 0.0, 0.8);
-
+    vec3 mv_position = vec3(modelview * vec4(position, 1.0));
+    frag_light = normalize(light_position - mv_position);
+    frag_normal = vec3(normalmatrix * vec4(normal, 1.0));
     gl_Position = mvp * vec4(position, 1.0);
 }
 
