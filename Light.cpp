@@ -8,58 +8,54 @@
 
 #include "Light.h"
 
-#include <GL/gl.h>
-
 Light::Light() :
-    pos_{0, 0, 0, 1},
-    ambient_{0.2, 0.2, 0.2, 1},
-    diffuse_{0.4, 0.4, 0.4, 1},
-    specular_{0.4, 0.4, 0.4, 1},
-    spot_enabled_{false},
-    spot_direction_{1, 0, 0},
-    spot_cutoff_{45},
-    spot_exponent_{64} {
+    position_(0, 0, 0, 1),
+    ambient_(0.2, 0.2, 0.2, 1),
+    diffuse_(0.4, 0.4, 0.4, 1),
+    specular_(0.4, 0.4, 0.4, 1),
+    spot_enabled_(false),
+    spot_direction_(1, 0, 0),
+    spot_cutoff_(45),
+    spot_exponent_(64) {
 }
 
-void Light::SetPos(float x, float y, float z, float w) {
-    pos_ = {x, y, z, w};
+void Light::SetPosition(float x, float y, float z, float w) {
+    position_ = glm::vec4(x, y, z, w);
 }
 
 void Light::SetAmbient(float r, float g, float b, float a) {
-    ambient_ = {r, g, b, a};
+    ambient_ = glm::vec4(r, g, b, a);
 }
 
 void Light::SetDiffuse(float r, float g, float b, float a) {
-    diffuse_ = {r, g, b, a};
+    diffuse_ = glm::vec4(r, g, b, a);
 }
 
 void Light::SetSpecular(float r, float g, float b, float a) {
-    specular_ = {r, g, b, a};
+    specular_ = glm::vec4(r, g, b, a);
 }
 
 void Light::SetupSpot(float x, float y, float z, float cutoff, float exponent) {
     spot_enabled_ = true;
-    spot_direction_ = {x, y, z};
+    spot_direction_ = glm::vec3(x, y, z);
     spot_cutoff_ = cutoff;
     spot_exponent_ = exponent;
 }
 
-int Light::SetupLight(int light_id) {
+void Light::SetupLight(const glm::mat4& modelview,
+        std::vector<LightInfo>& lights) {
     if (!active_)
-        return light_id;
+        return;
 
-    glEnable(light_id);
-    glLightfv(light_id, GL_POSITION, pos_.data());
-    glLightfv(light_id, GL_AMBIENT, ambient_.data());
-    glLightfv(light_id, GL_DIFFUSE, diffuse_.data());
-    glLightfv(light_id, GL_SPECULAR, specular_.data());
-    
-    if (spot_enabled_) {
-        glLightfv(light_id, GL_SPOT_DIRECTION, spot_direction_.data());
-        glLightf(light_id, GL_SPOT_CUTOFF, spot_cutoff_);
-        glLightf(light_id, GL_SPOT_EXPONENT, spot_exponent_);
-    }
-
-    return light_id + 1;
+    LightInfo info;
+    info.position = modelview * position_;
+    info.diffuse = diffuse_;
+    info.specular = specular_;
+    info.ambient = ambient_;
+    info.is_spot = spot_enabled_;
+    info.direction = spot_direction_;
+    info.cutoff = spot_cutoff_;
+    info.exponent = spot_exponent_;
+    lights.push_back(info);
 }
 

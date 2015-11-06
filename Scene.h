@@ -27,7 +27,7 @@ public:
      * Renders the scene
      * Throws runtime_error if there's no camera
      */
-    void Render();
+    void RenderScene();
 };
 
 #endif

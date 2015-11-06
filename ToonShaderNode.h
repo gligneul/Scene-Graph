@@ -41,13 +41,14 @@ public:
     /**
      * Renders the node
      */
-    void Render();
+    void Render(const std::vector<LightInfo>& lights,
+            const glm::mat4& projection, const glm::mat4& modelview);
 
 private:
     static ShaderProgram *program_;
 
     std::shared_ptr<Mesh> mesh_;
-    float color_[4];
+    glm::vec4 color_;
 };
 
 #endif

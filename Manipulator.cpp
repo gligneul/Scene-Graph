@@ -11,13 +11,12 @@
 #include <cmath>
 
 #include <glm/gtx/transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <GL/gl.h>
 
 #include "Manipulator.h"
 
 Manipulator::Manipulator() :
-    reference_{0, 0, 0},
+    reference_(0, 0, 0),
     matrix_(1.0),
     inv_(1.0),
     operation_{Operation::kNone},
@@ -28,20 +27,16 @@ Manipulator::Manipulator() :
     invertY_{false} {
 }
 
-void Manipulator::Apply() {
-    glTranslatef(reference_[0], reference_[1], reference_[2]);
-    glMultMatrixf(glm::value_ptr(matrix_));
-    glTranslatef(-reference_[0], -reference_[1], -reference_[2]);
+glm::mat4 Manipulator::GetMatrix() {
+    return glm::translate(reference_) * matrix_ * glm::translate(-reference_);
 }
 
-void Manipulator::ApplyInv() {
-    glTranslatef(-reference_[0], -reference_[1], -reference_[2]);
-    glMultMatrixf(glm::value_ptr(inv_));
-    glTranslatef(reference_[0], reference_[1], reference_[2]);
+glm::mat4 Manipulator::GetInverse() {
+    return glm::translate(-reference_) * matrix_ * glm::translate(reference_);
 }
 
 void Manipulator::SetReferencePoint(float x, float y, float z) {
-    reference_ = {x, y, z};
+    reference_ = glm::vec3(x, y, z);
 }
 
 void Manipulator::GlutMouse(int button, int state, int x, int y) {

@@ -6,12 +6,11 @@
  * Trabalho - Projeto Final
  */
 
-#include <GL/gl.h>
+#include <glm/gtx/transform.hpp>
 
 #include "Manipulator.h"
-#include "Transform.h"
-#include "invertMatrix.h"
 
+#include "Transform.h"
 
 Transform::Transform() :
     manipulator_{nullptr} {
@@ -19,80 +18,61 @@ Transform::Transform() :
 }
 
 void Transform::LoadIndentity() {
-    pushMatrix();
-    glLoadIdentity();
-    popMatrix();
+    matrix_ = glm::mat4(1.0f);
+    inverse_ = glm::mat4(1.0f);
 }
 
 void Transform::Rotate(float angle, float x, float y, float z) {
-    pushMatrix();
-    glRotatef(angle, x, y, z);
-    popMatrix();
+    matrix_ = glm::rotate(matrix_, angle, glm::vec3(x, y, z));
+    inverse_ = glm::inverse(matrix_);
 }
 
 void Transform::Translate(float x, float y, float z) {
-    pushMatrix();
-    glTranslatef(x, y, z);
-    popMatrix();
+    matrix_ = glm::translate(matrix_, glm::vec3(x, y, z));
+    inverse_ = glm::inverse(matrix_);
 }
 
 void Transform::Scale(float x, float y, float z) {
-    pushMatrix();
-    glScalef(x, y, z);
-    popMatrix();
-}
-
-bool Transform::SetupCamera() {
-    if (!active_)
-        return false;
-
-    if (Group::SetupCamera()) {
-        if (manipulator_)
-            manipulator_->ApplyInv();
-        glMultMatrixf(inv_);
-        return true;
-    }
-    return false;
+    matrix_ = glm::scale(matrix_, glm::vec3(x, y, z));
+    inverse_ = glm::inverse(matrix_);
 }
 
 void Transform::SetManipulator(std::unique_ptr<Manipulator> manipulator) {
     manipulator_ = std::move(manipulator);
 }
 
-int Transform::SetupLight(int light_id) {
+bool Transform::SetupCamera(glm::mat4& projection, glm::mat4& modelview) {
     if (!active_)
-        return light_id;
+        return false;
 
-    glPushMatrix();
-    glMultMatrixf(matrix_);
-    if (manipulator_ != nullptr)
-        manipulator_->Apply();
-    light_id = Group::SetupLight(light_id);
-    glPopMatrix();
-    return light_id;
+    if (Group::SetupCamera(projection, modelview)) {
+        if (manipulator_)
+            modelview *= manipulator_->GetInverse();
+        modelview *= inverse_;
+        return true;
+    }
+    return false;
 }
 
-void Transform::Render() {
+void Transform::SetupLight(const glm::mat4& modelview,
+        std::vector<LightInfo>& lights) {
     if (!active_)
         return;
 
-    glPushMatrix();
-    glMultMatrixf(matrix_);
-    if (manipulator_ != nullptr)
-        manipulator_->Apply();
-    Group::Render();
-    glPopMatrix();
+    glm::mat4 sub_mv = modelview;
+    if (manipulator_)
+        sub_mv *= manipulator_->GetMatrix();
+    Group::SetupLight(sub_mv * matrix_, lights);
 }
 
-void Transform::pushMatrix() {
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadMatrixf(matrix_);
-}
+void Transform::Render(const std::vector<LightInfo>& lights,
+        const glm::mat4& projection, const glm::mat4& modelview) {
+    if (!active_)
+        return;
 
-void Transform::popMatrix() {
-    glGetFloatv(GL_MODELVIEW_MATRIX, matrix_);
-    glPopMatrix();
-    gluInvertMatrix(matrix_, inv_);
+    glm::mat4 sub_mv = modelview;
+    if (manipulator_)
+        sub_mv *= manipulator_->GetMatrix();
+    Group::Render(lights, projection, sub_mv * matrix_);
 }
 

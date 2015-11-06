@@ -44,38 +44,33 @@ public:
     void Scale(float x, float y, float z);
 
     /**
-     * Sets the camera
-     * Returns true if the camera has been set
-     */
-    bool SetupCamera();
-
-    /**
-     * Sets the manipulator that will be loaded after the transformation
+     * Sets the manipulator
      */
     void SetManipulator(std::unique_ptr<Manipulator> manipulator);
 
     /**
-     * Sets the lights
-     * Receives the light id
-     * Returns the next light id
+     * Sets the camera
+     * Returns true if the camera has been set
+     * Returns the camera info by reference
      */
-    int SetupLight(int light_id);
+    bool SetupCamera(glm::mat4& projection, glm::mat4& modelview);
 
     /**
-     * Renders the entities
+     * Sets the lights
+     * Returns the light info by reference
      */
-    void Render();
+    void SetupLight(const glm::mat4& modelview, std::vector<LightInfo>& lights);
+
+    /**
+     * Renders the node
+     */
+    void Render(const std::vector<LightInfo>& lights,
+            const glm::mat4& projection, const glm::mat4& modelview);
 
 private:
-    /**
-     * Auxiliar functions for opengl matrix stack
-     */
-    void pushMatrix();
-    void popMatrix();
-
     std::unique_ptr<Manipulator> manipulator_;
-    float matrix_[16];
-    float inv_[16];
+    glm::mat4 matrix_;
+    glm::mat4 inverse_;
 };
 
 #endif

@@ -58,8 +58,9 @@ public:
     /**
      * Sets the camera
      * Returns true if the camera has been set
+     * Returns the camera info by reference
      */
-    bool SetupCamera();
+    virtual bool SetupCamera(glm::mat4& projection, glm::mat4& modelview);
 
 private:
     std::array<double, 3> eye_;

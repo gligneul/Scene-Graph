@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
     glutMotionFunc(Motion);
     GLenum err = glewInit();
     if (GLEW_OK != err) {
-        std::cerr << "Error: " << glewGetErrorString(err) << "\n";
+        std::cerr << "GLEW Error: " << glewGetErrorString(err) << "\n";
         exit(1);
     }
     CreateScene();
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
 }
     
 static void Display() {
-    scene->Render();
+    scene->RenderScene();
     glutSwapBuffers();
 }
 
@@ -89,12 +89,9 @@ static void CreateScene() {
     manipulator = new Manipulator();
     camera->SetManipulator(std::unique_ptr<Manipulator>(manipulator));
 
-    auto light_t = std::make_shared<Transform>();
-    light_t->Translate(0, 3, 0);
-    scene->AddNode(light_t);
-
     auto light = std::make_shared<Light>();
-    light_t->AddNode(light);
+    light->SetPosition(0, 3, 0);
+    scene->AddNode(light);
 
     auto bunny = std::make_shared<ToonShaderNode>();
     bunny->SetColor(0xAA55AA);

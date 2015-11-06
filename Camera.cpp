@@ -45,7 +45,7 @@ void Camera::SetManipulator(std::unique_ptr<Manipulator> manipulator) {
     manipulator_ = std::move(manipulator);
 }
 
-bool Camera::SetupCamera() {
+bool Camera::SetupCamera(glm::mat4& projection, glm::mat4& modelview) {
     if (!active_)
         return false;
 
@@ -54,15 +54,25 @@ bool Camera::SetupCamera() {
     glGetIntegerv(GL_VIEWPORT, vp); 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity(); 
-    gluPerspective(fovy_, (float)vp[2]/vp[3], znear_, zfar_); 
+    gluPerspective(fovy_, (float)vp[2]/vp[3], znear_, zfar_);
+    float projectionmatrix[16];
+    glGetFloatv(GL_PROJECTION_MATRIX, projectionmatrix);
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            projection[i][j] = projectionmatrix[4 * i + j];
 
     // Sets the modelview
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(eye_[0], eye_[1], eye_[2], center_[0], center_[1], center_[2],
             up_[0], up_[1], up_[2]);
+    float modelviewmatrix[16];
+    glGetFloatv(GL_MODELVIEW_MATRIX, modelviewmatrix);
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            modelview[i][j] = modelviewmatrix[4 * i + j];
     if (manipulator_)
-        manipulator_->Apply();
+        modelview *= manipulator_->GetMatrix();
 
     return true;
 }

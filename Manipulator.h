@@ -23,12 +23,12 @@ public:
     /**
      * Accumulates the manipulator matrix
      */
-    void Apply();
+    glm::mat4 GetMatrix();
 
     /**
      * Accumulates the inverse of the manipulator matrix
      */
-    void ApplyInv();
+    glm::mat4 GetInverse();
 
     /**
      * Sets the reference point (world center)
@@ -66,7 +66,7 @@ private:
     /** Computes the sphere vector for rotation */
     glm::vec3 computeSphereCoordinates(int x, int y);
 
-    std::array<float, 3> reference_;
+    glm::vec3 reference_;
     glm::mat4 matrix_;
     glm::mat4 inv_;
     Operation operation_;

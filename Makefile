@@ -31,14 +31,12 @@ Mesh.o: Mesh.cpp Mesh.h
 Scene.o: Scene.cpp Scene.h Group.h Node.h
 Manipulator.o: Manipulator.cpp Manipulator.h
 ShaderProgram.o: ShaderProgram.cpp ShaderProgram.h
-Transform.o: Transform.cpp Manipulator.h Transform.h Group.h Node.h \
- invertMatrix.h
+Transform.o: Transform.cpp Manipulator.h Transform.h Group.h Node.h
 Camera.o: Camera.cpp Camera.h Node.h Manipulator.h
-invertMatrix.o: invertMatrix.cpp invertMatrix.h
 Light.o: Light.cpp Light.h Node.h
 Group.o: Group.cpp Group.h Node.h
 Node.o: Node.cpp Node.h
 main.o: main.cpp Camera.h Node.h Light.h Manipulator.h Mesh.h Scene.h \
  Group.h ToonShaderNode.h Transform.h
 ToonShaderNode.o: ToonShaderNode.cpp Mesh.h ShaderProgram.h \
- invertMatrix.h ToonShaderNode.h Node.h
+ ToonShaderNode.h Node.h

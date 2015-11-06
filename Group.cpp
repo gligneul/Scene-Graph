@@ -15,24 +15,25 @@ void Group::AddNode(std::shared_ptr<Node> node) {
     nodes_.push_back(node);
 }
 
-bool Group::SetupCamera() {
+bool Group::SetupCamera(glm::mat4& projection, glm::mat4& modelview) {
     if (active_)
         for (auto& node : nodes_)
-            if (node->SetupCamera())
+            if (node->SetupCamera(projection, modelview))
                 return true;
     return false;
 }
 
-int Group::SetupLight(int light_id) {
+void Group::SetupLight(const glm::mat4& modelview, 
+        std::vector<LightInfo>& lights) {
     if (active_)
         for (auto& node : nodes_)
-            light_id = node->SetupLight(light_id);
-    return light_id;
+            node->SetupLight(modelview, lights);
 }
 
-void Group::Render() {
+void Group::Render(const std::vector<LightInfo>& lights,
+        const glm::mat4& projection, const glm::mat4& modelview) {
     if (active_)
         for (auto& node : nodes_)
-            node->Render();
+            node->Render(lights, projection, modelview);
 }
 

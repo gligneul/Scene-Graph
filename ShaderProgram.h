@@ -11,6 +11,8 @@
 
 #include <string>
 
+#include <glm/glm.hpp>
+
 class ShaderProgram {
 public:
     /**
@@ -23,6 +25,24 @@ public:
      * Destructor
      */
     ~ShaderProgram();
+
+    /**
+     * Enables or disables the program
+     */
+    void Enable();
+    void Disable();
+
+    /**
+     * Sets an attribute location
+     */
+    void SetAttribLocation(const char *name, unsigned int location);
+
+    /**
+     * Sets an uniform variable
+     */
+    void SetUniformVec3(const char *name, const glm::vec3& value);
+    void SetUniformVec4(const char *name, const glm::vec4& value);
+    void SetUniformMat4(const char *name, const glm::mat4& value);
 
     /**
      * Obtains the shader program handle

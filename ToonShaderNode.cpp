@@ -6,11 +6,8 @@
  * Trabalho - Projeto Final
  */
 
-#include <GL/glew.h>
-
 #include "Mesh.h"
 #include "ShaderProgram.h"
-#include "invertMatrix.h"
 
 #include "ToonShaderNode.h"
 
@@ -28,48 +25,30 @@ ToonShaderNode::~ToonShaderNode() {
 }
 
 void ToonShaderNode::SetColor(unsigned int color, float alpha) {
-    color_[0] = ((color >> 16) & 0xFF) / 255.0f;
-    color_[1] = ((color >> 8) & 0xFF) / 255.0f;
-    color_[2] = (color & 0xFF) / 255.0f;
-    color_[3] = alpha;
+    color_ = glm::vec4(
+       ((color >> 16) & 0xFF) / 255.0f,
+       ((color >> 8) & 0xFF) / 255.0f,
+       (color & 0xFF) / 255.0f,
+       alpha
+    );
 }
 
 void ToonShaderNode::SetMesh(std::shared_ptr<Mesh> mesh) {
     mesh_ = mesh;
 }
 
-void ToonShaderNode::Render() {
-    unsigned int program = program_->GetHandle();
-    glUseProgram(program);
-
-    glBindAttribLocation(program, 0, "position");
-    glBindAttribLocation(program, 0, "normal");
-
-    float modelview[16];
-    glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
-    GLuint modelview_location = glGetUniformLocation(program, "modelview");
-    glUniformMatrix4fv(modelview_location, 1, false, modelview);
-
-    float normalmatrix[16];
-    gluInvertMatrix(modelview, normalmatrix);
-    GLuint normalmatrix_loc = glGetUniformLocation(program, "normalmatrix");
-    glUniformMatrix4fv(normalmatrix_loc, 1, true, normalmatrix);
-
-    float mvp[16];
-    glPushAttrib(GL_TRANSFORM_BIT);
-    glMatrixMode(GL_PROJECTION);
-    glMultMatrixf(modelview);
-    glGetFloatv(GL_PROJECTION_MATRIX, mvp);
-    glPopMatrix();
-    glPopAttrib();
-    GLuint mvp_location = glGetUniformLocation(program, "mvp");
-    glUniformMatrix4fv(mvp_location, 1, GL_FALSE, mvp);
-
-    GLuint color_location = glGetUniformLocation(program, "color");
-    glUniform4fv(color_location, 1, color_);
-
+void ToonShaderNode::Render(const std::vector<LightInfo>& lights,
+        const glm::mat4& projection, const glm::mat4& modelview) {
+    (void)lights;
+    program_->Enable();
+    program_->SetAttribLocation("position", 0);
+    program_->SetAttribLocation("normal", 1);
+    program_->SetUniformMat4("modelview", modelview);
+    program_->SetUniformMat4("normalmatrix",
+            glm::transpose(glm::inverse(modelview)));
+    program_->SetUniformMat4("mvp", projection * modelview);
+    program_->SetUniformVec4("color", color_);
     mesh_->Draw();
-
-    glUseProgram(0);
+    program_->Disable();
 }
 

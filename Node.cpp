@@ -15,15 +15,23 @@ Node::Node() :
 Node::~Node() {
 }
 
-bool Node::SetupCamera() {
+bool Node::SetupCamera(glm::mat4& projection, glm::mat4& modelview) {
+    (void)projection;
+    (void)modelview;
     return false;
 }
 
-int Node::SetupLight(int light_id) {
-    return light_id;
+void Node::SetupLight(const glm::mat4& modelview, 
+        std::vector<LightInfo>& lights) {
+    (void)modelview;
+    (void)lights;
 }
 
-void Node::Render() {
+void Node::Render(const std::vector<LightInfo>& lights,
+        const glm::mat4& projection, const glm::mat4& modelview) {
+    (void)lights;
+    (void)projection;
+    (void)modelview;
 }
 
 void Node::SetActive(bool active) {

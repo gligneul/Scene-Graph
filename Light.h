@@ -24,7 +24,7 @@ public:
      * Sets the light position
      * Default = 0, 0, 0
      */
-    void SetPos(float x, float y, float z, float w = 1.0f);
+    void SetPosition(float x, float y, float z, float w = 1.0f);
 
     /**
      * Sets the ambient component
@@ -51,18 +51,17 @@ public:
 
     /**
      * Sets the lights
-     * Receives the light id
-     * Returns the next light id
+     * Returns the light info by reference
      */
-    int SetupLight(int light_id);
+    void SetupLight(const glm::mat4& modelview, std::vector<LightInfo>& lights);
 
 private:
-    std::array<float, 4> pos_;
-    std::array<float, 4> ambient_;
-    std::array<float, 4> diffuse_;
-    std::array<float, 4> specular_;
+    glm::vec4 position_;
+    glm::vec4 ambient_;
+    glm::vec4 diffuse_;
+    glm::vec4 specular_;
     bool spot_enabled_;
-    std::array<float, 3> spot_direction_;
+    glm::vec3 spot_direction_;
     float spot_cutoff_;
     float spot_exponent_;
 };

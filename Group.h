@@ -31,22 +31,23 @@ public:
 
     /**
      * Sets the camera
-     * Receives the reference to the output modelView
      * Returns true if the camera has been set
+     * Returns the camera info by reference
      */
-    virtual bool SetupCamera();
+    virtual bool SetupCamera(glm::mat4& projection, glm::mat4& modelview);
 
     /**
      * Sets the lights
-     * Receives the light id
-     * Returns the next light id
+     * Returns the light info by reference
      */
-    virtual int SetupLight(int light_id);
+    virtual void SetupLight(const glm::mat4& modelview, 
+            std::vector<LightInfo>& lights);
 
     /**
-     * Renders the entities
+     * Renders the node
      */
-    virtual void Render();
+    virtual void Render(const std::vector<LightInfo>& lights,
+            const glm::mat4& projection, const glm::mat4& modelview);
 
 private:
     /** Group's children */

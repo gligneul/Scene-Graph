@@ -10,6 +10,7 @@
 #include <iostream>
 #include <stdexcept>
 
+#include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h>
 
 #include "ShaderProgram.h"
@@ -42,6 +43,33 @@ std::string ShaderProgram::ReadFile(const std::string& path) {
     return output;
 }
 
+void ShaderProgram::Enable() {
+    glUseProgram(program_);
+}
+
+void ShaderProgram::Disable() {
+    glUseProgram(0);
+}
+
+void ShaderProgram::SetUniformVec3(const char *name, const glm::vec3& value) {
+    GLuint location = glGetUniformLocation(program_, name);
+    glUniform3fv(location, 1, glm::value_ptr(value));
+}
+
+void ShaderProgram::SetUniformVec4(const char *name, const glm::vec4& value) {
+    GLuint location = glGetUniformLocation(program_, name);
+    glUniform4fv(location, 1, glm::value_ptr(value));
+}
+
+void ShaderProgram::SetUniformMat4(const char *name, const glm::mat4& value) {
+    GLuint location = glGetUniformLocation(program_, name);
+    glUniformMatrix4fv(location, 1, false, glm::value_ptr(value));
+}
+
+void ShaderProgram::SetAttribLocation(const char *name, unsigned int location) {
+    glBindAttribLocation(program_, location, name);
+}
+
 void ShaderProgram::CompileShader(int shader_type, const std::string& path) {
     auto shader_str = ReadFile(path);
     auto shader_cstr = shader_str.c_str();
@@ -63,14 +91,6 @@ void ShaderProgram::CompileShader(int shader_type, const std::string& path) {
 
 void ShaderProgram::LinkShader() {
     glLinkProgram(program_);
-    GLint success = 0;
-    glGetShaderiv(program_, GL_LINK_STATUS, &success);
-    if (!success) {
-        GLint length = 0;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
-        char log[length];
-        glGetShaderInfoLog(shader, length, &length, log);
-        throw std::runtime_error(log);
-    }
+    // TODO verify status
 }
 
