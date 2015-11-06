@@ -6,12 +6,13 @@
  * Trabalho - Projeto de Grafo de Cena
  */
 
+#include <iostream>
 #include <algorithm>
 #include <cmath>
 
-#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <GL/gl.h>
-#include <GL/glut.h>
 
 #include "Manipulator.h"
 #include "invertMatrix.h"
@@ -19,31 +20,25 @@
 
 Manipulator::Manipulator() :
     reference_{0, 0, 0},
-    matrix_{1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1},
-    inv_{1, 0, 0, 0,
-         0, 1, 0, 0,
-         0, 0, 1, 0,
-         0, 0, 0, 1},
+    matrix_(1.0),
+    inv_(1.0),
     operation_{Operation::kNone},
     x_{0},
     y_{0},
-    v_{0, 0, 0},
+    v_(0, 0, 0),
     invertX_{false},
     invertY_{false} {
 }
 
 void Manipulator::Apply() {
     glTranslatef(reference_[0], reference_[1], reference_[2]);
-    glMultMatrixf(matrix_.data());
+    glMultMatrixf(glm::value_ptr(matrix_));
     glTranslatef(-reference_[0], -reference_[1], -reference_[2]);
 }
 
 void Manipulator::ApplyInv() {
     glTranslatef(-reference_[0], -reference_[1], -reference_[2]);
-    glMultMatrixf(inv_.data());
+    glMultMatrixf(glm::value_ptr(inv_));
     glTranslatef(reference_[0], reference_[1], reference_[2]);
 }
 
@@ -52,8 +47,8 @@ void Manipulator::SetReferencePoint(float x, float y, float z) {
 }
 
 void Manipulator::GlutMouse(int button, int state, int x, int y) {
-    SetOperation<GLUT_LEFT_BUTTON, Operation::kRotation>(button, state, x, y);
-    SetOperation<GLUT_RIGHT_BUTTON, Operation::kZoom>(button, state, x, y);
+    SetOperation<0, Operation::kRotation>(button, state, x, y);
+    SetOperation<2, Operation::kZoom>(button, state, x, y);
 }
 
 void Manipulator::SetInvertAxis(bool invertX, bool invertY) {
@@ -65,15 +60,12 @@ void Manipulator::GlutMotion(int x, int y) {
     if (operation_ == Operation::kNone)
         return;
 
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-
     if (operation_ == Operation::kRotation) {
-        vec3::Vf v = computeSphereCoordinates(x, y);
-        vec3::Vf w = vec3::cross(v_, v);
-        float theta = asin(vec3::norm(w)) * 180 / M_PI;
-        glRotatef(theta, w[0], w[1], w[2]);
+        glm::vec3 v = computeSphereCoordinates(x, y);
+        glm::vec3 w = glm::cross(v_, v);
+        float theta = asin(glm::length(w));
+        if (theta != 0)
+            matrix_ = glm::rotate(theta, w) * matrix_;
         v_ = v;
     } else if (operation_ == Operation::kZoom) {
         int vp[4]; 
@@ -81,14 +73,10 @@ void Manipulator::GlutMotion(int x, int y) {
         float dy = y - y_;
         float f = dy / vp[3];
         float scale = 1 + kZoomScale * f;
-        glScalef(scale, scale, scale);
+        matrix_ = glm::scale(glm::vec3(scale, scale, scale)) * matrix_;
     }
 
-    glMultMatrixf(matrix_.data());
-    glGetFloatv(GL_MODELVIEW_MATRIX, matrix_.data());
-    gluInvertMatrix(matrix_.data(), inv_.data());
-    glPopMatrix();
-
+    inv_ = glm::inverse(matrix_);
     x_ = x;
     y_ = y;
 }
@@ -96,18 +84,18 @@ void Manipulator::GlutMotion(int x, int y) {
 template<int k_button, Manipulator::Operation k_operation>
 void Manipulator::SetOperation(int button, int state, int x, int y) {
     if (button == k_button) {
-        if (state == GLUT_DOWN && operation_ == Operation::kNone) {
+        if (state == 0 && operation_ == Operation::kNone) {
             operation_ = k_operation;
             x_ = x;
             y_ = y;
             v_ = computeSphereCoordinates(x, y);
-        } else if (state == GLUT_UP && operation_ == k_operation) {
+        } else if (state == 1 && operation_ == k_operation) {
             operation_ = Operation::kNone;
         }
     }
 }
 
-std::array<float, 3> Manipulator::computeSphereCoordinates(int x, int y) {
+glm::vec3 Manipulator::computeSphereCoordinates(int x, int y) {
     int vp[4]; 
     glGetIntegerv(GL_VIEWPORT, vp);
     const float w = vp[2];
@@ -117,20 +105,18 @@ std::array<float, 3> Manipulator::computeSphereCoordinates(int x, int y) {
     if (invertY_) y = h - y;
 
     const float radius = std::min(w / 2.0f, h / 2.0f);
-    std::array<float, 3> v = {
-        (x - w / 2.0f) / radius,
-        (h - y - h / 2.0f) / radius,
-    };
+    float vx = (x - w / 2.0f) / radius;
+    float vy = (h - y - h / 2.0f) / radius;
+    float vz = 0;
 
-    const float dist = hypot(v[0], v[1]);
+    const float dist = hypot(vx, vy);
     if (dist > 1.0f) {
-        v[0] /= dist;
-        v[1] /= dist;
-        v[2] = 0;
+        vx /= dist;
+        vy /= dist;
     } else {
-        v[2] = sqrt(1 - v[0] * v[0] - v[1] * v[1]);
+        vz = sqrt(1 - vx * vx - vy * vy);
     }
 
-    return v;
+    return glm::vec3(vx, vy, vz);
 }
 

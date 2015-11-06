@@ -11,6 +11,8 @@
 
 #include <array>
 
+#include <glm/glm.hpp>
+
 class Manipulator {
 public:
     /**
@@ -62,14 +64,14 @@ private:
     void SetOperation(int button, int state, int x, int y);
 
     /** Computes the sphere vector for rotation */
-    std::array<float, 3> computeSphereCoordinates(int x, int y);
+    glm::vec3 computeSphereCoordinates(int x, int y);
 
     std::array<float, 3> reference_;
-    std::array<float, 16> matrix_;
-    std::array<float, 16> inv_;
+    glm::mat4 matrix_;
+    glm::mat4 inv_;
     Operation operation_;
     float x_, y_;
-    std::array<float, 3> v_;
+    glm::vec3 v_;
     bool invertX_, invertY_;
 };
 
