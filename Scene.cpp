@@ -10,28 +10,15 @@
 
 #include <GL/gl.h>
 
-#include "Environ.h"
-
 #include "Scene.h"
 
-Scene::Scene() :
-    environ_{nullptr} {
-}
-
-void Scene::SetEnviron(std::unique_ptr<Environ> environ) {
-    environ_ = std::move(environ);
+Scene::Scene() {
 }
 
 void Scene::Render() {
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_NORMALIZE);
-    glEnable(GL_LIGHTING);
-    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
-
-    if (environ_)
-        environ_->Load();
-
+    glClearColor(0.8, 0.8, 0.8, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
     if (!SetupCamera())
@@ -39,8 +26,5 @@ void Scene::Render() {
 
     SetupLight(GL_LIGHT0);
     Group::Render();
-
-    if (environ_)
-        environ_->Unload();
 }
 

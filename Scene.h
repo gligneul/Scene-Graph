@@ -13,8 +13,6 @@
 
 #include "Group.h"
 
-class Environ;
-
 /**
  * The scene root
  */
@@ -26,18 +24,10 @@ public:
     Scene();
 
     /**
-     * Sets the enviroment
-     */
-    void SetEnviron(std::unique_ptr<Environ> environ);
-
-    /**
      * Renders the scene
      * Throws runtime_error if there's no camera
      */
     void Render();
-
-private:
-    std::unique_ptr<Environ> environ_;
 };
 
 #endif

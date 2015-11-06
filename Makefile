@@ -26,20 +26,18 @@ clean:
 	$(cc) $(cflags) -c -o $@ $<
 
 # Dendencies (use 'make depend' to update)
-Mesh.o: Mesh.cpp vec3.h Mesh.h Shape.h
-color.o: color.cpp color.h
-Scene.o: Scene.cpp Environ.h Scene.h Group.h Node.h
+Mesh.o: Mesh.cpp vec3.h Mesh.h
+Scene.o: Scene.cpp Scene.h Group.h Node.h
 Manipulator.o: Manipulator.cpp Manipulator.h invertMatrix.h vec3.h
-Environ.o: Environ.cpp color.h Environ.h
+ShaderProgram.o: ShaderProgram.cpp ShaderProgram.h
 Transform.o: Transform.cpp Manipulator.h Transform.h Group.h Node.h \
  invertMatrix.h
 Camera.o: Camera.cpp Camera.h Node.h Manipulator.h
 invertMatrix.o: invertMatrix.cpp invertMatrix.h
-Group.o: Group.cpp Group.h Node.h
 Light.o: Light.cpp Light.h Node.h
-Entity.o: Entity.cpp Entity.h Node.h Appearance.h Shape.h
-ToonShader.o: ToonShader.cpp ToonShader.h Appearance.h
-main.o: main.cpp Camera.h Node.h Entity.h Environ.h Light.h Manipulator.h \
- Appearance.h Mesh.h vec3.h Shape.h Scene.h Group.h ToonShader.h Transform.h
-lodepng.o: lodepng.cpp lodepng.h
+Group.o: Group.cpp Group.h Node.h
 Node.o: Node.cpp Node.h
+main.o: main.cpp Camera.h Node.h Light.h Manipulator.h Mesh.h vec3.h \
+ Scene.h Group.h ToonShaderNode.h Transform.h
+ToonShaderNode.o: ToonShaderNode.cpp ShaderProgram.h ToonShaderNode.h \
+ Node.h invertMatrix.h

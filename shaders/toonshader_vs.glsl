@@ -6,13 +6,14 @@
  * Trabalho - Projeto de Grafo de Cena
  */
 
-#version 400
+#version 130
 
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 normal;
+in vec3 position;
+in vec3 normal;
 
 uniform mat4 modelview;
-uniform mat4 projection;
+uniform mat4 normalmatrix;
+uniform mat4 mvp;
 
 out float light_intensity;
 
@@ -21,13 +22,12 @@ void main () {
 
     vec4 global_position = modelview * vec4(position, 1.0);
 
-    mat4 normalmatrix = transpose(inverse(modelview));
     vec3 global_normal = normalize(vec3(normalmatrix * vec4(normal, 1.0)));
 
     vec3 l = normalize(vec3(light_position - global_position));
 
     light_intensity = 0.2 + clamp(dot(global_normal, l), 0.0, 0.8);
 
-    gl_Position = projection * global_position;
+    gl_Position = mvp * vec4(position, 1.0);
 }
 

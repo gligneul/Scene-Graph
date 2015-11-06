@@ -10,11 +10,11 @@
 
 in float light_intensity;
 
-uniform vec3 color;
+uniform vec4 color;
 
 out vec4 frag_color;
 
 void main () {
-    frag_color = vec4(color * light_intensity, 1.0);
+    frag_color = vec4(color.rgb * light_intensity, color.a);
 }
 

@@ -6,23 +6,23 @@
  * Trabalho - Projeto de Grafo de Cena
  */
 
-#ifndef APPEARANCE_H
-#define APPEARANCE_H
+#ifndef STATE_H
+#define STATE_H
 
-class Appearance {
+class State {
 public:
     /**
      * Virtual destructor
      */
-    virtual ~Appearance() {}
+    virtual ~State() {}
 
     /**
-     * Loads the appearance
+     * Loads the state
      */
     virtual void Load() = 0;
 
     /**
-     * Unloads the appearance
+     * Unloads the state
      */
     virtual void Unload() = 0;
 };

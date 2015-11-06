@@ -24,12 +24,9 @@ Mesh::Mesh(const std::string& path) :
     vbo_{0, 0, 0},
     vao_(0),
     n_indices_(0) {
-    std::vector<float> vertices;
-    std::vector<float> normals;
-    std::vector<unsigned int> indices;
-    ReadFile(path, vertices, normals, indices);
-    NormalizeVertices(vertices);
-    InitializeVBO(vertices, normals, indices);
+    ReadFile(path, vertices_, normals_, indices_);
+    NormalizeVertices(vertices_);
+    InitializeVBO(vertices_, normals_, indices_);
 }
 
 Mesh::~Mesh() {
@@ -43,6 +40,13 @@ void Mesh::Draw() {
     glBindVertexArray(vao_);
     glDrawElements(GL_TRIANGLES, n_indices_, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+}
+
+void Mesh::GetMesh(std::vector<float>& vertices, std::vector<float>& normals,
+        std::vector<unsigned int>& indices) {
+    vertices = vertices_;
+    normals = normals_;
+    indices = indices_;
 }
 
 vec3::Vf Mesh::GetVertex(unsigned int index, const float vertices[]) {

@@ -15,9 +15,7 @@
 
 #include "vec3.h"
 
-#include "Shape.h"
-
-class Mesh : public Shape {
+class Mesh {
 public:
     /**
      * Default Constructor
@@ -35,6 +33,12 @@ public:
      * Draws the shape
      */
     void Draw();
+
+    /**
+     * Obtains the mesh information
+     */
+    void GetMesh(std::vector<float>& vertices, std::vector<float>& normals,
+            std::vector<unsigned int>& indices);
 
 private:
     /**
@@ -85,6 +89,9 @@ private:
             const std::vector<float>& normals,
             const std::vector<unsigned int> indices);
 
+    std::vector<float> vertices_;
+    std::vector<float> normals_;
+    std::vector<unsigned int> indices_;
     unsigned int vbo_[3];
     unsigned int vao_;
     unsigned int n_indices_;

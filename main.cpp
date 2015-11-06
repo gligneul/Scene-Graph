@@ -14,13 +14,11 @@
 #include <GL/glut.h>
 
 #include "Camera.h"
-#include "Entity.h"
-#include "Environ.h"
 #include "Light.h"
 #include "Manipulator.h"
 #include "Mesh.h"
 #include "Scene.h"
-#include "ToonShader.h"
+#include "ToonShaderNode.h"
 #include "Transform.h"
 
 /* Scene nodes */
@@ -48,7 +46,6 @@ int main(int argc, char* argv[]) {
         std::cerr << "Error: " << glewGetErrorString(err) << "\n";
         exit(1);
     }
-    ToonShader::Init(); // TODO remover init daqui
     CreateScene();
     glutMainLoop();
     return 0; 
@@ -99,16 +96,9 @@ static void CreateScene() {
     auto light = std::make_shared<Light>();
     light_t->AddNode(light);
 
-    auto bunny = std::make_shared<Entity>();
-    bunny->SetAppearance(std::make_shared<ToonShader>());
-    bunny->SetShape(std::make_shared<Mesh>("data/bunny.msh"));
+    auto bunny = std::make_shared<ToonShaderNode>();
+    bunny->SetColor(0xAA55AA);
+    bunny->SetMesh(std::make_shared<Mesh>("data/bunny.msh"));
     scene->AddNode(bunny);
-
-#if 0
-    auto cube = std::make_shared<Entity>();
-    cube->SetAppearance(std::make_shared<Material>(0xFFFFFF));
-    cube->SetShape(std::make_shared<Mesh>("data/cube.msh"));
-    scene->AddNode(cube);
-#endif
 }
 
