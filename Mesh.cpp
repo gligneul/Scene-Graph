@@ -14,16 +14,11 @@
 
 #include <GL/glew.h>
 
-#include "vec3.h"
-
 #include "Mesh.h"
-
-#define BUFFER_OFFSET(offset) ((void*)0 + (offset))
 
 Mesh::Mesh(const std::string& path) :
     vbo_{0, 0, 0},
-    vao_(0),
-    n_indices_(0) {
+    vao_(0) {
     ReadFile(path, vertices_, normals_, indices_);
     NormalizeVertices(vertices_);
     InitializeVBO(vertices_, normals_, indices_);
@@ -38,7 +33,7 @@ Mesh::~Mesh() {
 
 void Mesh::Draw() {
     glBindVertexArray(vao_);
-    glDrawElements(GL_TRIANGLES, n_indices_, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, indices_.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 
@@ -49,16 +44,16 @@ void Mesh::GetMesh(std::vector<float>& vertices, std::vector<float>& normals,
     indices = indices_;
 }
 
-vec3::Vf Mesh::GetVertex(unsigned int index, const float vertices[]) {
-    return {
+glm::vec3 Mesh::GetVertex(unsigned int index, const float vertices[]) {
+    return glm::vec3(
         vertices[index * 3],
         vertices[index * 3 + 1],
         vertices[index * 3 + 2]
-    };
+    );
 }
 
 void Mesh::SetVertex(unsigned int index, float vertices[],
-        const vec3::Vf& vertex) {
+        const glm::vec3& vertex) {
     vertices[index * 3] = vertex[0];
     vertices[index * 3 + 1] = vertex[1];
     vertices[index * 3 + 2] = vertex[2];
@@ -147,8 +142,8 @@ void Mesh::ReadMSH(const std::string& path, std::vector<float>& vertices,
 }
 
 void Mesh::NormalizeVertices(std::vector<float>& vertices) {
-    vec3::Vf min;
-    min.fill(std::numeric_limits<float>::max());
+    glm::vec3 min(std::numeric_limits<float>::max(),
+        std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
     float max = std::numeric_limits<float>::min();
 
     for (size_t i = 0; i < vertices.size(); i += 3) {
@@ -159,9 +154,8 @@ void Mesh::NormalizeVertices(std::vector<float>& vertices) {
     }
 
     for (size_t i = 0; i < vertices.size() / 3; ++i) {
-        vec3::Vf vertex = GetVertex(i, vertices.data());
-        vec3::Vf normalized =
-                vec3::sub(vec3::div(vec3::sub(vertex, min), max), 0.5f);
+        glm::vec3 vertex = GetVertex(i, vertices.data());
+        glm::vec3 normalized = (vertex - min) / max - 0.5f;
         SetVertex(i, vertices.data(), normalized);
     }
 }
@@ -170,7 +164,7 @@ void Mesh::CalculateNormals(const std::vector<float>& vertices,
         const std::vector<unsigned int>& indices, std::vector<float>& normals) {
 
     // Initialize the normals
-    std::vector<vec3::Vf> pre_normals(vertices.size() / 3);
+    std::vector<glm::vec3> pre_normals(vertices.size() / 3);
     for (size_t i = 0; i < pre_normals.size(); ++i) {
         pre_normals[i] = {0, 0, 0};
     }
@@ -181,35 +175,38 @@ void Mesh::CalculateNormals(const std::vector<float>& vertices,
         unsigned int v[3] = {indices[i], indices[i + 1], indices[i + 2]};
 
         // Triangle's vertices
-        vec3::Vf triangle[3] = {
+        glm::vec3 triangle[3] = {
             GetVertex(v[0], vertices.data()),
             GetVertex(v[1], vertices.data()),
             GetVertex(v[2], vertices.data())
         };
 
         // Vectors created by the triangle's vertexes
-        vec3::Vf v0_to_v1 = vec3::sub(triangle[1], triangle[0]);
-        vec3::Vf v0_to_v2 = vec3::sub(triangle[2], triangle[0]);
-        vec3::Vf v1_to_v2 = vec3::sub(triangle[2], triangle[1]);
+        glm::vec3 v0_to_v1 = triangle[1] - triangle[0];
+        glm::vec3 v0_to_v2 = triangle[2] - triangle[0];
+        glm::vec3 v1_to_v2 = triangle[2] - triangle[1];
+
+        auto angleBetween = [](const glm::vec3& u, const glm::vec3& v) {
+            return acos(glm::dot(u, v) / (glm::length(u) * glm::length(v)));
+        };
 
         // Angle between the vectors
         float angle[3];
-        angle[0] = vec3::angle(v0_to_v1, v0_to_v2);
-        angle[1] = vec3::angle(v1_to_v2, vec3::neg(v0_to_v1));
+        angle[0] = angleBetween(v0_to_v1, v0_to_v2);
+        angle[1] = angleBetween(v1_to_v2, -v0_to_v1);
         angle[2] = M_PI - angle[0] - angle[1];
 
         // Triangle's normal
-        vec3::Vf t_normal = vec3::normalize(vec3::cross(v0_to_v1, v0_to_v2));
+        glm::vec3 t_normal = glm::normalize(glm::cross(v0_to_v1, v0_to_v2));
 
         // Vertex normal += triangle normal * vertex angle in the triangle
         for (size_t j = 0; j < 3; ++j)
-            pre_normals[v[j]] = vec3::add(pre_normals[v[j]],
-                    vec3::mul(t_normal, angle[j]));
+            pre_normals[v[j]] = pre_normals[v[j]] + t_normal * angle[j];
     }
 
     normals.resize(vertices.size());
     for (size_t i = 0; i < pre_normals.size(); ++i)
-        SetVertex(i, normals.data(), vec3::normalize(pre_normals[i]));
+        SetVertex(i, normals.data(), glm::normalize(pre_normals[i]));
 }
 
 void Mesh::InitializeVBO(const std::vector<float>& vertices,
@@ -235,7 +232,6 @@ void Mesh::InitializeVBO(const std::vector<float>& vertices,
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_[2]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int),
              indices.data(), GL_STATIC_DRAW);
-    n_indices_ = indices.size();
 
     glBindVertexArray(0);
 }

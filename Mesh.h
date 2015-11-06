@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-#include "vec3.h"
+#include <glm/glm.hpp>
 
 class Mesh {
 public:
@@ -44,13 +44,13 @@ private:
     /**
      * Receives an index and returns the vertex
      */
-    vec3::Vf GetVertex(unsigned int index, const float vertices[]);
+    glm::vec3 GetVertex(unsigned int index, const float vertices[]);
 
     /**
      * Receives an index and sets the vertice
      */
     void SetVertex(unsigned int index, float vertices[],
-            const vec3::Vf& vertex);
+            const glm::vec3& vertex);
 
     /**
      * Reads the vertex information and the point information from file
@@ -94,7 +94,6 @@ private:
     std::vector<unsigned int> indices_;
     unsigned int vbo_[3];
     unsigned int vao_;
-    unsigned int n_indices_;
 };
 
 #endif

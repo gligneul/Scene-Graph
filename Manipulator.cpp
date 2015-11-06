@@ -15,8 +15,6 @@
 #include <GL/gl.h>
 
 #include "Manipulator.h"
-#include "invertMatrix.h"
-#include "vec3.h"
 
 Manipulator::Manipulator() :
     reference_{0, 0, 0},
