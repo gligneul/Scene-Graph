@@ -52,7 +52,6 @@ void ToonShaderNode::Render(const std::vector<LightInfo>& lights,
     shared_->silhouette_program->Enable();
     shared_->silhouette_program->SetAttribLocation("position", 0);
     shared_->silhouette_program->SetAttribLocation("normal", 1);
-    shared_->silhouette_program->SetUniformMat4("normalmatrix", normalmatrix);
     shared_->silhouette_program->SetUniformMat4("mvp", mvp);
     mesh_->Draw();
 
