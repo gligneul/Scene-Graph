@@ -56,7 +56,7 @@ bool Camera::SetupCamera(glm::mat4& projection, glm::mat4& modelview) {
     projection = glm::perspective(fovy_, (float)vp[2]/vp[3], znear_, zfar_);
     modelview = glm::lookAt(eye_, center_, up_);
     if (manipulator_)
-        modelview *= manipulator_->GetMatrix();
+        modelview *= manipulator_->GetMatrix(glm::normalize(center_ - eye_));
 
     return true;
 }

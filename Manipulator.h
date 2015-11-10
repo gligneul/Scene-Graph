@@ -23,7 +23,7 @@ public:
     /**
      * Accumulates the manipulator matrix
      */
-    glm::mat4 GetMatrix();
+    glm::mat4 GetMatrix(const glm::vec3& look_dir = glm::vec3(0, 0, -1));
 
     /**
      * Accumulates the inverse of the manipulator matrix

@@ -27,8 +27,19 @@ Manipulator::Manipulator() :
     invertY_{false} {
 }
 
-glm::mat4 Manipulator::GetMatrix() {
-    return glm::translate(reference_) * matrix_ * glm::translate(-reference_);
+glm::mat4 Manipulator::GetMatrix(const glm::vec3& look_dir) {
+    if (look_dir == glm::vec3(0, 0, -1))
+        return glm::translate(reference_)
+               * matrix_
+               * glm::translate(-reference_);
+
+    glm::vec3 w = glm::cross(look_dir, glm::vec3(0, 0, -1));
+    float theta = asin(glm::length(w));
+    return glm::translate(reference_)
+           * glm::rotate(-theta, w)
+           * matrix_
+           * glm::rotate(theta, w)
+           * glm::translate(-reference_);
 }
 
 glm::mat4 Manipulator::GetInverse() {

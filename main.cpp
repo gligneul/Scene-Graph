@@ -95,7 +95,6 @@ static void CreateScene() {
     scene = new Scene();
 
     auto camera = std::make_shared<Camera>();
-    //camera->SetEye(0.5, 0.5, 4);
     camera->SetEye(5, 2, 3);
     camera->SetCenter(0.5, 0.5, 0);
     camera->SetUp(0, 1, 0);
