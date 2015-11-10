@@ -30,25 +30,25 @@ public:
      * Sets the eye coordinates
      * Default = (1, 0, 0)
      */
-    void SetEye(double x, double y, double z);
+    void SetEye(float x, float y, float z);
 
     /**
      * Sets the center coordinates
      * Default = (0, 0, 0)
      */
-    void SetCenter(double x, double y, double z);
+    void SetCenter(float x, float y, float z);
 
     /**
      * Sets the up coordinates
      * Default = (0, 1, 0)
      */
-    void SetUp(double x, double y, double z);
+    void SetUp(float x, float y, float z);
 
     /**
      * Sets the perspective parameters
      * Default 60, 1, 100
      */
-    void SetPerspective(double fovy, double znear, double zfar);
+    void SetPerspective(float fovy, float znear, float zfar);
 
     /**
      * Sets the manipulator
@@ -63,12 +63,12 @@ public:
     virtual bool SetupCamera(glm::mat4& projection, glm::mat4& modelview);
 
 private:
-    std::array<double, 3> eye_;
-    std::array<double, 3> center_;
-    std::array<double, 3> up_;
-    double fovy_;
-    double znear_;
-    double zfar_;
+    glm::vec3 eye_;
+    glm::vec3 center_;
+    glm::vec3 up_;
+    float fovy_;
+    float znear_;
+    float zfar_;
     std::unique_ptr<Manipulator> manipulator_;
 };
 

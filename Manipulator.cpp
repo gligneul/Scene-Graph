@@ -58,7 +58,7 @@ void Manipulator::GlutMotion(int x, int y) {
         glm::vec3 w = glm::cross(v_, v);
         float theta = asin(glm::length(w));
         if (theta != 0)
-            matrix_ = glm::rotate(theta, w) * matrix_;
+            matrix_ = glm::rotate(matrix_, theta, w);
         v_ = v;
     } else if (operation_ == Operation::kZoom) {
         int vp[4]; 
@@ -66,7 +66,7 @@ void Manipulator::GlutMotion(int x, int y) {
         float dy = y - y_;
         float f = dy / vp[3];
         float scale = 1 + kZoomScale * f;
-        matrix_ = glm::scale(glm::vec3(scale, scale, scale)) * matrix_;
+        matrix_ = glm::scale(matrix_, glm::vec3(scale, scale, scale));
     }
 
     inv_ = glm::inverse(matrix_);

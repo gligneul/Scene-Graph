@@ -7,7 +7,7 @@
 cc=g++
 cflags=-O0 -g -Wall -Wextra -Werror -std=c++11
 iflags=-I./lib
-lflags=-lGL -lGLU -lGLEW -lglut
+lflags=-lGL -lGLEW -lglut
 target=scenegraph
 src=$(wildcard *.cpp)
 obj=$(src:.cpp=.o)
