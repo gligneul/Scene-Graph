@@ -21,7 +21,7 @@ public:
     /**
      * Constructor
      */
-    ToonShaderNode();
+    ToonShaderNode(unsigned int color = 0x111111, float silhouette = 0.005);
 
     /**
      * Destructor
@@ -37,6 +37,11 @@ public:
      * Sets the mesh
      */
     void SetMesh(std::shared_ptr<Mesh> mesh);
+
+    /**
+     * Sets the mesh
+     */
+    void SetMesh(const std::string& mesh);
 
     /**
      * Renders the node
@@ -55,6 +60,7 @@ private:
     // Attributes
     std::shared_ptr<Mesh> mesh_;
     glm::vec4 color_;
+    float silhouette_;
 };
 
 #endif

@@ -6,6 +6,8 @@
  * Trabalho - Projeto Final
  */
 
+#include <cmath>
+
 #include <glm/gtx/transform.hpp>
 
 #include "Manipulator.h"
@@ -23,7 +25,8 @@ void Transform::LoadIndentity() {
 }
 
 void Transform::Rotate(float angle, float x, float y, float z) {
-    matrix_ = glm::rotate(matrix_, angle, glm::vec3(x, y, z));
+    matrix_ = glm::rotate(matrix_, (float)(angle * M_PI / 180.0),
+            glm::vec3(x, y, z));
     inverse_ = glm::inverse(matrix_);
 }
 

@@ -20,8 +20,8 @@ out vec4 frag_color;
 void main () {
     float light_intensity = max(dot(normalize(frag_normal),
             normalize(frag_light)), 0);
-    light_intensity = floor(light_intensity * num_colors) / num_colors;
     light_intensity += 0.3;
+    light_intensity = ceil(light_intensity * num_colors) / num_colors;
     frag_color = vec4(color.rgb * light_intensity, color.a);
 }
 

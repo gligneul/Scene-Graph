@@ -8,14 +8,13 @@
 
 #version 130
 
-const float silhouette_size = 0.005;
-
 in vec3 position;
 in vec3 normal;
 
+uniform float silhouette;
 uniform mat4 mvp;
 
 void main () {
-    gl_Position = mvp * vec4(position + silhouette_size * normal, 1.0);
+    gl_Position = mvp * vec4(position + silhouette * normal, 1.0);
 }
 

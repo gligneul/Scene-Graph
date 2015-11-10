@@ -15,10 +15,10 @@
 
 ToonShaderNode::Shared *ToonShaderNode::shared_ = nullptr;
 
-ToonShaderNode::ToonShaderNode() :
+ToonShaderNode::ToonShaderNode(unsigned int color, float silhouette) :
     mesh_{nullptr},
-    color_{0.3f, 0.3f, 0.3f, 1.0f} {
-
+    silhouette_(silhouette) {
+    SetColor(color);
     if (!shared_) {
         shared_ = new Shared;
         shared_->toon_program = new ShaderProgram("shaders/toonshader");
@@ -42,6 +42,10 @@ void ToonShaderNode::SetMesh(std::shared_ptr<Mesh> mesh) {
     mesh_ = mesh;
 }
 
+void ToonShaderNode::SetMesh(const std::string& mesh) {
+    mesh_ = std::make_shared<Mesh>(mesh);
+}
+
 void ToonShaderNode::Render(const std::vector<LightInfo>& lights,
         const glm::mat4& projection, const glm::mat4& modelview) {
     (void)lights;
@@ -52,6 +56,7 @@ void ToonShaderNode::Render(const std::vector<LightInfo>& lights,
     shared_->silhouette_program->Enable();
     shared_->silhouette_program->SetAttribLocation("position", 0);
     shared_->silhouette_program->SetAttribLocation("normal", 1);
+    shared_->silhouette_program->SetUniformFloat("silhouette", silhouette_);
     shared_->silhouette_program->SetUniformMat4("mvp", mvp);
     mesh_->Draw();
 

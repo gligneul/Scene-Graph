@@ -40,7 +40,8 @@ public:
     /**
      * Sets an uniform variable
      */
-    void SetUniformBool(const char *name, bool value);
+    void SetUniformInteger(const char *name, int value);
+    void SetUniformFloat(const char *name, float value);
     void SetUniformVec3(const char *name, const glm::vec3& value);
     void SetUniformVec4(const char *name, const glm::vec4& value);
     void SetUniformMat4(const char *name, const glm::mat4& value);

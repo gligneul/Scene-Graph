@@ -19,7 +19,7 @@ out vec3 frag_light;
 out vec3 frag_normal;
 
 void main () {
-    vec3 light_position = vec3(modelview * vec4(0, 3, 0, 1));
+    vec3 light_position = vec3(modelview * vec4(0, 10, 0, 1));
 
     vec3 mv_position = vec3(modelview * vec4(position, 1.0));
     frag_light = normalize(light_position - mv_position);

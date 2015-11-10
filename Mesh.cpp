@@ -20,7 +20,6 @@ Mesh::Mesh(const std::string& path) :
     vbo_{0, 0, 0},
     vao_(0) {
     ReadFile(path, vertices_, normals_, indices_);
-    NormalizeVertices(vertices_);
     InitializeVBO(vertices_, normals_, indices_);
 }
 
@@ -65,6 +64,7 @@ void Mesh::ReadFile(const std::string& path, std::vector<float>& vertices,
     if (extension == ".off") {
         ReadOFF(path, vertices, indices);
         CalculateNormals(vertices, indices, normals);
+        NormalizeVertices(vertices_);
     } else if (extension == ".msh") {
         ReadMSH(path, vertices, normals, indices);
     } else {

@@ -28,6 +28,7 @@ clean:
 
 # Dendencies (use 'make depend' to update)
 Mesh.o: Mesh.cpp Mesh.h
+Engine.o: Engine.cpp Engine.h Transform.h Group.h Node.h
 Scene.o: Scene.cpp Scene.h Group.h Node.h
 Manipulator.o: Manipulator.cpp Manipulator.h
 ShaderProgram.o: ShaderProgram.cpp ShaderProgram.h
@@ -36,7 +37,7 @@ Camera.o: Camera.cpp Camera.h Node.h Manipulator.h
 Light.o: Light.cpp Light.h Node.h
 Group.o: Group.cpp Group.h Node.h
 Node.o: Node.cpp Node.h
-main.o: main.cpp Camera.h Node.h Light.h Manipulator.h Mesh.h Scene.h \
- Group.h ToonShaderNode.h Transform.h
+main.o: main.cpp Camera.h Node.h Engine.h Transform.h Group.h Light.h \
+ Manipulator.h Mesh.h Scene.h ToonShaderNode.h
 ToonShaderNode.o: ToonShaderNode.cpp Mesh.h ShaderProgram.h \
  ToonShaderNode.h Node.h
