@@ -45,8 +45,14 @@ public:
             const glm::mat4& projection, const glm::mat4& modelview);
 
 private:
-    static ShaderProgram *program_;
+    // Shared between instances
+    struct Shared {
+        ShaderProgram *toon_program;
+        ShaderProgram *silhouette_program;
+    };
+    static Shared *shared_;
 
+    // Attributes
     std::shared_ptr<Mesh> mesh_;
     glm::vec4 color_;
 };

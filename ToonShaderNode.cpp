@@ -6,19 +6,24 @@
  * Trabalho - Projeto Final
  */
 
+#include <glm/gtx/transform.hpp>
+
 #include "Mesh.h"
 #include "ShaderProgram.h"
 
 #include "ToonShaderNode.h"
 
-ShaderProgram *ToonShaderNode::program_ = nullptr;
+ToonShaderNode::Shared *ToonShaderNode::shared_ = nullptr;
 
 ToonShaderNode::ToonShaderNode() :
     mesh_{nullptr},
     color_{0.3f, 0.3f, 0.3f, 1.0f} {
 
-    if (!program_)
-        program_ = new ShaderProgram("shaders/toonshader");
+    if (!shared_) {
+        shared_ = new Shared;
+        shared_->toon_program = new ShaderProgram("shaders/toonshader");
+        shared_->silhouette_program = new ShaderProgram("shaders/silhouette");
+    }
 }
 
 ToonShaderNode::~ToonShaderNode() {
@@ -40,15 +45,25 @@ void ToonShaderNode::SetMesh(std::shared_ptr<Mesh> mesh) {
 void ToonShaderNode::Render(const std::vector<LightInfo>& lights,
         const glm::mat4& projection, const glm::mat4& modelview) {
     (void)lights;
-    program_->Enable();
-    program_->SetAttribLocation("position", 0);
-    program_->SetAttribLocation("normal", 1);
-    program_->SetUniformMat4("modelview", modelview);
-    program_->SetUniformMat4("normalmatrix",
-            glm::transpose(glm::inverse(modelview)));
-    program_->SetUniformMat4("mvp", projection * modelview);
-    program_->SetUniformVec4("color", color_);
+
+    auto mvp = projection * modelview;
+    auto normalmatrix = glm::transpose(glm::inverse(modelview));
+
+    shared_->silhouette_program->Enable();
+    shared_->silhouette_program->SetAttribLocation("position", 0);
+    shared_->silhouette_program->SetAttribLocation("normal", 1);
+    shared_->silhouette_program->SetUniformMat4("normalmatrix", normalmatrix);
+    shared_->silhouette_program->SetUniformMat4("mvp", mvp);
     mesh_->Draw();
-    program_->Disable();
+
+    shared_->toon_program->Enable();
+    shared_->toon_program->SetAttribLocation("position", 0);
+    shared_->toon_program->SetAttribLocation("normal", 1);
+    shared_->toon_program->SetUniformMat4("modelview", modelview);
+    shared_->toon_program->SetUniformMat4("normalmatrix", normalmatrix);
+    shared_->toon_program->SetUniformMat4("mvp", mvp);
+    shared_->toon_program->SetUniformVec4("color", color_);
+    mesh_->Draw();
+    shared_->toon_program->Disable();
 }
 

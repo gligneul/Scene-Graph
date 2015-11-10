@@ -8,6 +8,8 @@
 
 #version 130
 
+const int num_colors = 2;
+
 in vec3 frag_light;
 in vec3 frag_normal;
 
@@ -18,7 +20,8 @@ out vec4 frag_color;
 void main () {
     float light_intensity = max(dot(normalize(frag_normal),
             normalize(frag_light)), 0);
-    light_intensity += 0.2;
+    light_intensity = floor(light_intensity * num_colors) / num_colors;
+    light_intensity += 0.3;
     frag_color = vec4(color.rgb * light_intensity, color.a);
 }
 

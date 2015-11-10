@@ -51,6 +51,11 @@ void ShaderProgram::Disable() {
     glUseProgram(0);
 }
 
+void ShaderProgram::SetUniformBool(const char *name, bool value) {
+    GLuint location = glGetUniformLocation(program_, name);
+    glUniform1i(location, value);
+}
+
 void ShaderProgram::SetUniformVec3(const char *name, const glm::vec3& value) {
     GLuint location = glGetUniformLocation(program_, name);
     glUniform3fv(location, 1, glm::value_ptr(value));
