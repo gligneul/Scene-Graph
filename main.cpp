@@ -22,14 +22,22 @@
 #include "ToonShaderNode.h"
 #include "Transform.h"
 
-/* Scene nodes */
+/* Scene and engine*/
 static Scene *scene = nullptr;
 static Engine *engine = nullptr;
-static Camera *globalcamera = nullptr;
-static Camera *jeepcamera = nullptr;
-static Manipulator *curr_manipulator = nullptr;
-static Manipulator *global_manipulator = nullptr;
-static Manipulator *jeep_manipulator = nullptr;
+
+/* Cameras and manipulators */
+enum CameraList {
+    kGlobal,
+    kDriver,
+    kJeep,
+    kNCameras
+};
+static struct {
+    Camera *camera;
+    Manipulator *manipulator;
+} cameras[kNCameras];
+static int curr_camera = kDriver;
 
 /* Auxiliary functions and glut callbacks */
 static void Display();
@@ -38,6 +46,7 @@ static void Idle();
 static void Mouse(int button, int state, int x, int y);
 static void Motion(int x, int y);
 static void CreateScene();
+static std::shared_ptr<Camera> CreateCamera(Group *parent, int cameraId);
 static std::shared_ptr<ToonShaderNode> CreateJeepItem(
         std::shared_ptr<Transform> jeep, const std::string& name,
         unsigned int color);
@@ -76,13 +85,10 @@ static void Keyboard(unsigned char key, int, int) {
             break;
         }
         case 'c': {
-            bool global_active = globalcamera->GetActive();
-            globalcamera->SetActive(!global_active);
-            jeepcamera->SetActive(global_active);
-            if (global_active)
-                curr_manipulator = jeep_manipulator;
-            else
-                curr_manipulator = global_manipulator;
+            cameras[curr_camera].camera->SetActive(false);
+            curr_camera = (curr_camera + 1) % kNCameras;
+            cameras[curr_camera].camera->SetActive(true);
+            break;
         }
     }
     engine->Keyboard(key);
@@ -95,30 +101,22 @@ static void Idle() {
 }
 
 static void Mouse(int button, int state, int x, int y) {
-    curr_manipulator->GlutMouse(button, state, x, y);
+    cameras[curr_camera].manipulator->GlutMouse(button, state, x, y);
     glutPostRedisplay();
 }
 
 static void Motion(int x, int y) {
-    curr_manipulator->GlutMotion(x, y);
+    cameras[curr_camera].manipulator->GlutMotion(x, y);
     glutPostRedisplay();
 }
 
 static void CreateScene() {
     scene = new Scene();
 
-    auto camera = std::make_shared<Camera>();
-    globalcamera = camera.get();
-//    camera->SetEye(5, 2, 3);
-    camera->SetActive(false);
+    auto camera = CreateCamera(scene, kGlobal);
     camera->SetEye(20, 5, 20);
     camera->SetCenter(0.5, 0.5, 0);
     camera->SetUp(0, 1, 0);
-    camera->SetPerspective(50, 0.5, 50);
-    scene->AddNode(camera);
-
-    global_manipulator = new Manipulator();
-    camera->SetManipulator(std::unique_ptr<Manipulator>(global_manipulator));
 
     auto light = std::make_shared<Light>();
     light->SetPosition(0, 3, 0);
@@ -146,6 +144,20 @@ static void CreateScene() {
 
     auto jeep = CreateJeep();
     scene->AddNode(jeep);
+}
+
+static std::shared_ptr<Camera> CreateCamera(Group *parent, int cameraId) {
+    auto camera = std::make_shared<Camera>();
+    camera->SetPerspective(50, 0.5, 50);
+    camera->SetActive(false);
+    parent->AddNode(camera);
+    auto manipulator = new Manipulator();
+    camera->SetManipulator(std::unique_ptr<Manipulator>(manipulator));
+
+    cameras[cameraId].camera = camera.get();
+    cameras[cameraId].manipulator = manipulator;
+
+    return camera;
 }
 
 static std::shared_ptr<ToonShaderNode> CreateJeepItem(
@@ -263,21 +275,28 @@ static std::shared_ptr<Transform> CreateJeep() {
             frontrightwheel_speed, backleftwheel_speed, backrightwheel_speed,
             steering_wheel_engine);
 
-    // Creates the camera
+    // Creates the driver camera
+    auto drivercamera_t = std::make_shared<Transform>();
+    drivercamera_t->Translate(0.6, 0.5, 1.7);
+    drivercamera_t->Rotate(90, 1, 0, 0);
+    jeep->AddNode(drivercamera_t);
+
+    auto drivercamera = CreateCamera(drivercamera_t.get(), kDriver);
+    drivercamera->SetActive(true);
+    drivercamera->SetEye(0, 0, 0);
+    drivercamera->SetCenter(1, 0, 0);
+    drivercamera->SetUp(0, 1, 0);
+
+    // Creates the 3rd person camera
     auto jeepcamera_t = std::make_shared<Transform>();
-    curr_manipulator = jeep_manipulator = new Manipulator();
-    jeepcamera_t->SetManipulator(
-            std::unique_ptr<Manipulator>(jeep_manipulator));
-    jeepcamera_t->Translate(0.6, 0.5, 1.7);
+    jeepcamera_t->Rotate(90, 1, 0, 0);
     jeep->AddNode(jeepcamera_t);
 
-    auto camera = std::make_shared<Camera>();
-    jeepcamera = camera.get();
-    camera->SetEye(0, 0, 0);
-    camera->SetCenter(1, 0, 0);
-    camera->SetUp(0, 0, 1);
-    camera->SetPerspective(50, 0.5, 50);
-    jeepcamera_t->AddNode(camera);
+    auto jeepcamera = CreateCamera(jeepcamera_t.get(), kJeep);
+    cameras[kJeep].manipulator->SetReferencePoint(1, 1, 0);
+    jeepcamera->SetEye(-4, 1, 0);
+    jeepcamera->SetCenter(1, 1, 0);
+    jeepcamera->SetUp(0, 1, 0);
 
     return jeep;
 }
