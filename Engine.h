@@ -17,11 +17,18 @@
 class Engine {
 public:
     typedef std::shared_ptr<Transform> JeepNode;
+
     /**
      * Constructor
      */
-    Engine(JeepNode jeep, JeepNode frontleftwheel, JeepNode frontrightwheel,
-            JeepNode steering_wheel);
+    Engine(JeepNode jeep,
+           JeepNode frontleftwheel_direction,
+           JeepNode frontrightwheel_direction,
+           JeepNode frontleftwheel_speed,
+           JeepNode frontrightwheel_speed,
+           JeepNode backleftwheel_speed,
+           JeepNode backrightwheel_speed,
+           JeepNode steering_wheel);
 
     /**
      * Keyboard function
@@ -35,16 +42,20 @@ public:
 
 private:
     /* Constants */
-    const float kSpeedIncrement = 1;
+    const float kSpeedIncrement = 0.5;
     const float kSpeedMax = 10;
     const float kAlphaIncrement = 2;
-    const float kAlphaMax = 40;
+    const float kAlphaMax = 33.3;
     const float kSteeringWheelIncrement = 2 * kAlphaIncrement;
 
     /* Attributes */
     JeepNode jeep_;
-    JeepNode frontleftwheel_;
-    JeepNode frontrightwheel_;
+    JeepNode frontleftwheel_direction_;
+    JeepNode frontrightwheel_direction_;
+    JeepNode frontleftwheel_speed_;
+    JeepNode frontrightwheel_speed_;
+    JeepNode backleftwheel_speed_;
+    JeepNode backrightwheel_speed_;
     JeepNode steering_wheel_;
     float speed_;
     float alpha_;

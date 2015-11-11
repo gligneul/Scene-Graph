@@ -23,9 +23,13 @@
 #include "Transform.h"
 
 /* Scene nodes */
-static Scene* scene = nullptr;
-static Manipulator* manipulator = nullptr;
-static Engine* engine = nullptr;
+static Scene *scene = nullptr;
+static Engine *engine = nullptr;
+static Camera *globalcamera = nullptr;
+static Camera *jeepcamera = nullptr;
+static Manipulator *curr_manipulator = nullptr;
+static Manipulator *global_manipulator = nullptr;
+static Manipulator *jeep_manipulator = nullptr;
 
 /* Auxiliary functions and glut callbacks */
 static void Display();
@@ -71,6 +75,15 @@ static void Keyboard(unsigned char key, int, int) {
             exit(0);
             break;
         }
+        case 'c': {
+            bool global_active = globalcamera->GetActive();
+            globalcamera->SetActive(!global_active);
+            jeepcamera->SetActive(global_active);
+            if (global_active)
+                curr_manipulator = jeep_manipulator;
+            else
+                curr_manipulator = global_manipulator;
+        }
     }
     engine->Keyboard(key);
     glutPostRedisplay();
@@ -82,12 +95,12 @@ static void Idle() {
 }
 
 static void Mouse(int button, int state, int x, int y) {
-    manipulator->GlutMouse(button, state, x, y);
+    curr_manipulator->GlutMouse(button, state, x, y);
     glutPostRedisplay();
 }
 
 static void Motion(int x, int y) {
-    manipulator->GlutMotion(x, y);
+    curr_manipulator->GlutMotion(x, y);
     glutPostRedisplay();
 }
 
@@ -95,14 +108,17 @@ static void CreateScene() {
     scene = new Scene();
 
     auto camera = std::make_shared<Camera>();
-    camera->SetEye(5, 2, 3);
+    globalcamera = camera.get();
+//    camera->SetEye(5, 2, 3);
+    camera->SetActive(false);
+    camera->SetEye(20, 5, 20);
     camera->SetCenter(0.5, 0.5, 0);
     camera->SetUp(0, 1, 0);
     camera->SetPerspective(50, 0.5, 50);
     scene->AddNode(camera);
 
-    manipulator = new Manipulator();
-    camera->SetManipulator(std::unique_ptr<Manipulator>(manipulator));
+    global_manipulator = new Manipulator();
+    camera->SetManipulator(std::unique_ptr<Manipulator>(global_manipulator));
 
     auto light = std::make_shared<Light>();
     light->SetPosition(0, 3, 0);
@@ -152,7 +168,7 @@ static std::shared_ptr<Transform> CreateJeep() {
     CreateJeepItem(jeep, "panel", 0x222222);
     CreateJeepItem(jeep, "seat", 0x705A34);
     CreateJeepItem(jeep, "windshieldcleaner", 0x222222);
-    CreateJeepItem(jeep, "windshield", 0xEEEEEE);
+//    CreateJeepItem(jeep, "windshield", 0xEEEEEE);
 
     // Create driver
     auto bunny_t = std::make_shared<Transform>();
@@ -167,34 +183,57 @@ static std::shared_ptr<Transform> CreateJeep() {
     bunny->SetMesh(std::make_shared<Mesh>("data/bunny.msh"));
     bunny_t->AddNode(bunny);
 
-    // Create right wheels
+    // Create right wheel
     auto rightwheel = std::make_shared<Transform>();
+    rightwheel->Translate(-2.5, 0.644, -0.438);
     auto tire = CreateJeepItem(rightwheel, "tire", 0x444444);
     auto hubcap = CreateJeepItem(rightwheel, "hubcap", 0xAAAAAA);
 
+    // Create front right wheel
+    auto frontrightwheel_speed = std::make_shared<Transform>();
+    frontrightwheel_speed->AddNode(rightwheel);
+
+    auto frontrightwheel_direction = std::make_shared<Transform>();
+    frontrightwheel_direction->AddNode(frontrightwheel_speed);
+
     auto frontrightwheel = std::make_shared<Transform>();
-    frontrightwheel->AddNode(rightwheel);
+    frontrightwheel->AddNode(frontrightwheel_direction);
+    frontrightwheel->Translate(2.5, -0.644, 0.438);
     jeep->AddNode(frontrightwheel);
 
+    // Create back right wheel
+    auto backrightwheel_speed = std::make_shared<Transform>();
+    backrightwheel_speed->AddNode(rightwheel);
+
     auto backrightwheel = std::make_shared<Transform>();
-    backrightwheel->Translate(-2.5, 0, 0);
-    backrightwheel->AddNode(rightwheel);
+    backrightwheel->AddNode(backrightwheel_speed);
+    backrightwheel->Translate(0, -0.644, 0.438);
     jeep->AddNode(backrightwheel);
 
-    // Create left wheels
+    // Create left wheel
     auto leftwheel = std::make_shared<Transform>();
-    leftwheel->Translate(2.5, 0.644, 0.438);
     leftwheel->Rotate(180, 0, 0, 1);
-    leftwheel->Translate(-2.5, 0.644, -0.438);
     leftwheel->AddNode(rightwheel);
 
+    // Create front left wheel
+    auto frontleftwheel_speed = std::make_shared<Transform>();
+    frontleftwheel_speed->AddNode(leftwheel);
+
+    auto frontleftwheel_direction = std::make_shared<Transform>();
+    frontleftwheel_direction->AddNode(frontleftwheel_speed);
+
     auto frontleftwheel = std::make_shared<Transform>();
-    frontleftwheel->AddNode(leftwheel);
+    frontleftwheel->AddNode(frontleftwheel_direction);
+    frontleftwheel->Translate(2.5, 0.644, 0.438);
     jeep->AddNode(frontleftwheel);
 
+    // Create back left wheel
+    auto backleftwheel_speed = std::make_shared<Transform>();
+    backleftwheel_speed->AddNode(leftwheel);
+
     auto backleftwheel = std::make_shared<Transform>();
-    backleftwheel->Translate(-2.5, 0, 0);
-    backleftwheel->AddNode(leftwheel);
+    backleftwheel->AddNode(backleftwheel_speed);
+    backleftwheel->Translate(0, 0.644, 0.438);
     jeep->AddNode(backleftwheel);
 
     // Create lights
@@ -206,12 +245,39 @@ static std::shared_ptr<Transform> CreateJeep() {
     jeep->AddNode(leftlight);
 
     // Create steering wheel
+    auto steering_wheel_centered = std::make_shared<Transform>();
+    steering_wheel_centered->Translate(-1.111, -0.495, -1.372);
+    CreateJeepItem(steering_wheel_centered, "steeringwheel", 0x222222);
+
+    auto steering_wheel_engine = std::make_shared<Transform>();
+    steering_wheel_engine->AddNode(steering_wheel_centered);
+
     auto steering_wheel = std::make_shared<Transform>();
+    steering_wheel->AddNode(steering_wheel_engine);
+    steering_wheel->Translate(1.111, 0.495, 1.372);
     jeep->AddNode(steering_wheel);
-    CreateJeepItem(steering_wheel, "steeringwheel", 0x222222);
 
     // Creates the engine
-    engine = new Engine(jeep, frontleftwheel, frontrightwheel, steering_wheel);
+    engine = new Engine(jeep, frontleftwheel_direction,
+            frontrightwheel_direction, frontleftwheel_speed,
+            frontrightwheel_speed, backleftwheel_speed, backrightwheel_speed,
+            steering_wheel_engine);
+
+    // Creates the camera
+    auto jeepcamera_t = std::make_shared<Transform>();
+    curr_manipulator = jeep_manipulator = new Manipulator();
+    jeepcamera_t->SetManipulator(
+            std::unique_ptr<Manipulator>(jeep_manipulator));
+    jeepcamera_t->Translate(0.6, 0.5, 1.7);
+    jeep->AddNode(jeepcamera_t);
+
+    auto camera = std::make_shared<Camera>();
+    jeepcamera = camera.get();
+    camera->SetEye(0, 0, 0);
+    camera->SetCenter(1, 0, 0);
+    camera->SetUp(0, 0, 1);
+    camera->SetPerspective(50, 0.5, 50);
+    jeepcamera_t->AddNode(camera);
 
     return jeep;
 }
