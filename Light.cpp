@@ -13,10 +13,8 @@ Light::Light() :
     ambient_(0.2, 0.2, 0.2, 1),
     diffuse_(0.4, 0.4, 0.4, 1),
     specular_(0.4, 0.4, 0.4, 1),
-    spot_enabled_(false),
-    spot_direction_(1, 0, 0),
-    spot_cutoff_(45),
-    spot_exponent_(64) {
+    attenuation_(1, 0, 0),
+    spot_enabled_(false) {
 }
 
 void Light::SetPosition(float x, float y, float z, float w) {
@@ -35,10 +33,14 @@ void Light::SetSpecular(float r, float g, float b, float a) {
     specular_ = glm::vec4(r, g, b, a);
 }
 
+void Light::SetAttenuation(float c, float l, float q) {
+    attenuation_ = glm::vec3(c, l, q);
+}
+
 void Light::SetupSpot(float x, float y, float z, float cutoff, float exponent) {
     spot_enabled_ = true;
-    spot_direction_ = glm::vec3(x, y, z);
-    spot_cutoff_ = cutoff;
+    spot_direction_ = glm::vec4(glm::normalize(glm::vec3(x, y, z)), 1);
+    spot_cutoff_ = cos(cutoff * M_PI / 180.0);
     spot_exponent_ = exponent;
 }
 
@@ -47,13 +49,16 @@ void Light::SetupLight(const glm::mat4& modelview,
     if (!active_)
         return;
 
+    auto normalmatrix = glm::transpose(glm::inverse(modelview));
+
     LightInfo info;
     info.position = modelview * position_;
     info.diffuse = diffuse_;
     info.specular = specular_;
     info.ambient = ambient_;
+    info.attenuation = attenuation_;
     info.is_spot = spot_enabled_;
-    info.direction = spot_direction_;
+    info.direction = glm::normalize(glm::vec3(normalmatrix * spot_direction_));
     info.cutoff = spot_cutoff_;
     info.exponent = spot_exponent_;
     lights.push_back(info);

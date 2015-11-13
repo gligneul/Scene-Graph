@@ -51,28 +51,31 @@ void ShaderProgram::Disable() {
     glUseProgram(0);
 }
 
-void ShaderProgram::SetUniformInteger(const char *name, int value) {
-    GLuint location = glGetUniformLocation(program_, name);
+void ShaderProgram::SetUniformInteger(const std::string& name, int value) {
+    GLuint location = glGetUniformLocation(program_, name.c_str());
     glUniform1i(location, value);
 }
 
-void ShaderProgram::SetUniformFloat(const char *name, float value) {
-    GLuint location = glGetUniformLocation(program_, name);
+void ShaderProgram::SetUniformFloat(const std::string& name, float value) {
+    GLuint location = glGetUniformLocation(program_, name.c_str());
     glUniform1f(location, value);
 }
 
-void ShaderProgram::SetUniformVec3(const char *name, const glm::vec3& value) {
-    GLuint location = glGetUniformLocation(program_, name);
+void ShaderProgram::SetUniformVec3(const std::string& name,
+        const glm::vec3& value) {
+    GLuint location = glGetUniformLocation(program_, name.c_str());
     glUniform3fv(location, 1, glm::value_ptr(value));
 }
 
-void ShaderProgram::SetUniformVec4(const char *name, const glm::vec4& value) {
-    GLuint location = glGetUniformLocation(program_, name);
+void ShaderProgram::SetUniformVec4(const std::string& name,
+        const glm::vec4& value) {
+    GLuint location = glGetUniformLocation(program_, name.c_str());
     glUniform4fv(location, 1, glm::value_ptr(value));
 }
 
-void ShaderProgram::SetUniformMat4(const char *name, const glm::mat4& value) {
-    GLuint location = glGetUniformLocation(program_, name);
+void ShaderProgram::SetUniformMat4(const std::string& name,
+        const glm::mat4& value) {
+    GLuint location = glGetUniformLocation(program_, name.c_str());
     glUniformMatrix4fv(location, 1, false, glm::value_ptr(value));
 }
 

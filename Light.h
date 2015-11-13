@@ -45,6 +45,12 @@ public:
     void SetSpecular(float r, float g, float b, float a = 1.0f);
 
     /**
+     * Sets the attenuation: 1 / (c + l*d + q*d^2)
+     * Default = (1, 0, 0)
+     */
+    void SetAttenuation(float c, float l, float q);
+
+    /**
      * Setup spot
      */
     void SetupSpot(float x, float y, float z, float cutoff, float exponent);
@@ -60,8 +66,9 @@ private:
     glm::vec4 ambient_;
     glm::vec4 diffuse_;
     glm::vec4 specular_;
+    glm::vec3 attenuation_;
     bool spot_enabled_;
-    glm::vec3 spot_direction_;
+    glm::vec4 spot_direction_;
     float spot_cutoff_;
     float spot_exponent_;
 };

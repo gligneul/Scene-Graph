@@ -19,7 +19,7 @@ Camera::Camera() :
     eye_{1, 0, 0},
     center_{0, 0, 0},
     up_{0, 1, 0},
-    fovy_{60},
+    fovy_{50},
     znear_{1},
     zfar_{100},
     manipulator_{} {
@@ -38,7 +38,7 @@ void Camera::SetUp(float x, float y, float z) {
 }
 
 void Camera::SetPerspective(float fovy, float znear, float zfar) {
-    fovy_ = fovy * M_PI / 180.0;
+    fovy_ = fovy;
     znear_ = znear;
     zfar_ = zfar;
 }
@@ -53,7 +53,8 @@ bool Camera::SetupCamera(glm::mat4& projection, glm::mat4& modelview) {
 
     int vp[4]; 
     glGetIntegerv(GL_VIEWPORT, vp); 
-    projection = glm::perspective(fovy_, (float)vp[2]/vp[3], znear_, zfar_);
+    projection = glm::perspective((float)(fovy_ * M_PI / 180.0),
+            (float)vp[2]/vp[3], znear_, zfar_);
     modelview = glm::lookAt(eye_, center_, up_);
     if (manipulator_)
         modelview *= manipulator_->GetMatrix(glm::normalize(center_ - eye_));

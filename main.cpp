@@ -39,6 +39,10 @@ static struct {
 } cameras[kNCameras];
 static int curr_camera = kDriver;
 
+/* Other stuff */
+static Light *sun;
+static Light *light;
+
 /* Auxiliary functions and glut callbacks */
 static void Display();
 static void Keyboard(unsigned char key, int x, int y);
@@ -79,17 +83,19 @@ static void Display() {
 
 static void Keyboard(unsigned char key, int, int) {
     switch (key) {
-        case 'q': {
+        case 'q':
             delete scene;
             exit(0);
             break;
-        }
-        case 'c': {
+        case 'l':
+            sun->SetActive(!sun->GetActive());
+            light->SetActive(!light->GetActive());
+            break;
+        case 'c':
             cameras[curr_camera].camera->SetActive(false);
             curr_camera = (curr_camera + 1) % kNCameras;
             cameras[curr_camera].camera->SetActive(true);
             break;
-        }
     }
     engine->Keyboard(key);
     glutPostRedisplay();
@@ -119,8 +125,11 @@ static void CreateScene() {
     camera->SetUp(0, 1, 0);
 
     auto light = std::make_shared<Light>();
-    light->SetPosition(0, 3, 0);
+    light->SetPosition(0, 1, 0, 0.001);
+    light->SetDiffuse(0.6, 0.6, 0.6);
+    light->SetAmbient(0.4, 0.4, 0.4);
     scene->AddNode(light);
+    sun = light.get();
 
     auto floor_t = std::make_shared<Transform>();
     floor_t->Scale(1000, 0, 1000);
@@ -148,7 +157,7 @@ static void CreateScene() {
 
 static std::shared_ptr<Camera> CreateCamera(Group *parent, int cameraId) {
     auto camera = std::make_shared<Camera>();
-    camera->SetPerspective(50, 0.5, 50);
+    camera->SetPerspective(40, 0.5, 50);
     camera->SetActive(false);
     parent->AddNode(camera);
     auto manipulator = new Manipulator();
@@ -249,7 +258,19 @@ static std::shared_ptr<Transform> CreateJeep() {
     jeep->AddNode(backleftwheel);
 
     // Create lights
-    auto rightlight = CreateJeepItem(jeep, "light", 0xEEEEEE);
+    auto rightlight = std::make_shared<Transform>();
+    jeep->AddNode(rightlight);
+    CreateJeepItem(rightlight, "light", 0xEEEEEE);
+
+    auto rightlight_spot = std::make_shared<Light>();
+    rightlight_spot->SetActive(false);
+    rightlight_spot->SetPosition(2.956, -0.514, 1.074);
+    rightlight_spot->SetupSpot(1, 0, -0.1, 45, 16);
+    rightlight_spot->SetDiffuse(0, 0, 0);
+    rightlight_spot->SetAmbient(0.42, 0.42, 0.42);
+    rightlight_spot->SetAttenuation(1, 0.002, 0);
+    rightlight->AddNode(rightlight_spot);
+    light = rightlight_spot.get();
 
     auto leftlight = std::make_shared<Transform>();
     leftlight->Translate(0, 1.028, 0);

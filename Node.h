@@ -28,6 +28,7 @@ public:
         glm::vec4 diffuse;
         glm::vec4 specular;
         glm::vec4 ambient;
+        glm::vec3 attenuation;
         bool is_spot;
         glm::vec3 direction;
         float cutoff;

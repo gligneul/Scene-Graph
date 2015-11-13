@@ -50,6 +50,15 @@ public:
             const glm::mat4& projection, const glm::mat4& modelview);
 
 private:
+    /**
+     * Sets the uniform light data
+     */
+    void LoadLights(ShaderProgram *program,
+            const std::vector<LightInfo>& lights);
+
+    // Constants
+    const size_t kMaxLights = 8;
+
     // Shared between instances
     struct Shared {
         ShaderProgram *toon_program;

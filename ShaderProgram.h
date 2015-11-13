@@ -40,11 +40,11 @@ public:
     /**
      * Sets an uniform variable
      */
-    void SetUniformInteger(const char *name, int value);
-    void SetUniformFloat(const char *name, float value);
-    void SetUniformVec3(const char *name, const glm::vec3& value);
-    void SetUniformVec4(const char *name, const glm::vec4& value);
-    void SetUniformMat4(const char *name, const glm::mat4& value);
+    void SetUniformInteger(const std::string& name, int value);
+    void SetUniformFloat(const std::string& name, float value);
+    void SetUniformVec3(const std::string& name, const glm::vec3& value);
+    void SetUniformVec4(const std::string& name, const glm::vec4& value);
+    void SetUniformMat4(const std::string& name, const glm::mat4& value);
 
     /**
      * Obtains the shader program handle

@@ -6,6 +6,8 @@
  * Trabalho - Projeto Final
  */
 
+#include <algorithm>
+
 #include <glm/gtx/transform.hpp>
 
 #include "Mesh.h"
@@ -46,10 +48,26 @@ void ToonShaderNode::SetMesh(const std::string& mesh) {
     mesh_ = std::make_shared<Mesh>(mesh);
 }
 
+void ToonShaderNode::LoadLights(ShaderProgram *program,
+        const std::vector<LightInfo>& lights) {
+    unsigned int nlights = std::min(lights.size(), kMaxLights);
+    program->SetUniformInteger("nlights", nlights);
+    for (size_t i = 0; i < nlights; ++i) {
+        auto id = "lights[" + std::to_string(i) + "].";
+        program->SetUniformVec4(id + "position", lights[i].position);
+        program->SetUniformVec4(id + "diffuse", lights[i].diffuse);
+        program->SetUniformVec4(id + "specular", lights[i].specular);
+        program->SetUniformVec4(id + "ambient", lights[i].ambient);
+        program->SetUniformVec3(id + "attenuation", lights[i].attenuation);
+        program->SetUniformInteger(id + "is_spot", lights[i].is_spot);
+        program->SetUniformVec3(id + "direction", lights[i].direction);
+        program->SetUniformFloat(id + "cutoff", lights[i].cutoff);
+        program->SetUniformFloat(id + "exponent", lights[i].exponent);
+    }
+}
+
 void ToonShaderNode::Render(const std::vector<LightInfo>& lights,
         const glm::mat4& projection, const glm::mat4& modelview) {
-    (void)lights;
-
     auto mvp = projection * modelview;
     auto normalmatrix = glm::transpose(glm::inverse(modelview));
 
@@ -59,8 +77,10 @@ void ToonShaderNode::Render(const std::vector<LightInfo>& lights,
     shared_->silhouette_program->SetUniformFloat("silhouette", silhouette_);
     shared_->silhouette_program->SetUniformMat4("mvp", mvp);
     mesh_->Draw();
+    shared_->silhouette_program->Disable();
 
     shared_->toon_program->Enable();
+    LoadLights(shared_->toon_program, lights);
     shared_->toon_program->SetAttribLocation("position", 0);
     shared_->toon_program->SetAttribLocation("normal", 1);
     shared_->toon_program->SetUniformMat4("modelview", modelview);
