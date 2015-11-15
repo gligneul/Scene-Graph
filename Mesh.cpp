@@ -149,7 +149,7 @@ void Mesh::NormalizeVertices(std::vector<float>& vertices) {
     for (size_t i = 0; i < vertices.size(); i += 3) {
         for (size_t j = 0; j < 3; ++j) {
             min[j] = std::min(min[j], vertices[i + j]);
-            max = std::max(max, vertices[i + j]);
+            max = std::max(max, vertices[i + j] - min[j]);
         }
     }
 

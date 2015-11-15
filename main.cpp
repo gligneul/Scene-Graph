@@ -264,15 +264,14 @@ static std::shared_ptr<Transform> CreateJeep() {
 
     // Create driver
     auto bunny_t = std::make_shared<Transform>();
-    bunny_t->Translate(0.5, -1, 0.9);
-    bunny_t->Scale(0.8, 0.8, 0.8);
+    bunny_t->Translate(0.9, -0.6, 1.2);
+    bunny_t->Scale(0.6, 0.6, 0.6);
     bunny_t->Rotate(90, 1, 0, 0);
     bunny_t->Rotate(90, 0, 1, 0);
     jeep->AddNode(bunny_t);
 
-    auto bunny = std::make_shared<ToonShaderNode>();
-    bunny->SetColor(0xAA55AA);
-    bunny->SetMesh(std::make_shared<Mesh>("data/bunny.msh"));
+    auto bunny = std::make_shared<ToonShaderNode>(0xAA55AA, 0.02);
+    bunny->SetMesh(std::make_shared<Mesh>("data/bunny.off"));
     bunny_t->AddNode(bunny);
 
     // Create right wheel
