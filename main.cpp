@@ -185,14 +185,39 @@ static std::shared_ptr<Transform> CreateSun() {
 }
 
 static std::shared_ptr<Transform> CreateRoad() {
-    auto floor_t = std::make_shared<Transform>();
-    floor_t->Scale(1000, 0, 1000);
+    auto floor = std::make_shared<Transform>();
 
-    auto floor = std::make_shared<ToonShaderNode>(0xBADA5F);
-    floor->SetMesh("data/quad.msh");
-    floor_t->AddNode(floor);
+    auto quad = std::make_shared<Mesh>("data/quad.msh");
 
-    return floor_t;
+    auto grass_t = std::make_shared<Transform>();
+    grass_t->Scale(1000, 0, 1000);
+    floor->AddNode(grass_t);
+
+    auto grass = std::make_shared<ToonShaderNode>(0xBADA5F);
+    grass->SetMesh(quad);
+    grass_t->AddNode(grass);
+
+    auto road_t = std::make_shared<Transform>();
+    road_t->Scale(1000, 1, 10);
+    road_t->Translate(0, 0.001, 0);
+    floor->AddNode(road_t);
+
+    auto road = std::make_shared<ToonShaderNode>(0x111111);
+    road->SetMesh(quad);
+    road_t->AddNode(road);
+
+    auto strip = std::make_shared<ToonShaderNode>(0xEEEE11);
+    strip->SetMesh(quad);
+
+    for (int i = 0; i < 125; ++i) {
+        auto strip_t = std::make_shared<Transform>();
+        strip_t->Translate(i * 8 - 500, 0.002, 0);
+        strip_t->Scale(2.5, 1, 0.2);
+        strip_t->AddNode(strip);
+        floor->AddNode(strip_t);
+    }
+
+    return floor;
 }
 
 static std::shared_ptr<Transform> CreateShip() {
@@ -357,7 +382,7 @@ static std::shared_ptr<Transform> CreateJeep() {
 
     auto jeepcamera = CreateCamera(jeepcamera_t.get(), kJeep);
     cameras[kJeep].manipulator->SetReferencePoint(1, 1, 0);
-    jeepcamera->SetEye(-4, 1, 0);
+    jeepcamera->SetEye(-6, 2, 0);
     jeepcamera->SetCenter(1, 1, 0);
     jeepcamera->SetUp(0, 1, 0);
 

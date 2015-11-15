@@ -43,9 +43,9 @@ public:
 private:
     /* Constants */
     const float kSpeedIncrement = 0.5;
-    const float kSpeedMax = 10;
-    const float kAlphaIncrement = 2;
-    const float kAlphaMax = 33.3;
+    const float kSpeedMax = 20;
+    const float kAlphaIncrement = 1;
+    const float kAlphaMax = 40;
     const float kSteeringWheelIncrement = 2 * kAlphaIncrement;
 
     /* Attributes */
