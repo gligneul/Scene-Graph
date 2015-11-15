@@ -102,6 +102,10 @@ static void Keyboard(unsigned char key, int, int) {
             break;
         case 'b':
             sun->SetActive(!sun->GetActive());
+            if (sun->GetActive())
+                scene->SetBackgroud(0.69, 0.95, 1.00);
+            else
+                scene->SetBackgroud(0.17, 0.21, 0.29);
             break;
         case 'l':
             jeep_light->SetActive(!jeep_light->GetActive());
@@ -142,6 +146,7 @@ static void Motion(int x, int y) {
 
 static void CreateScene() {
     scene = new Scene();
+    scene->SetBackgroud(0.69, 0.95, 1.00);
 
     auto camera = CreateCamera(scene, kGlobal);
     camera->SetEye(20, 5, 20);

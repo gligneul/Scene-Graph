@@ -12,14 +12,21 @@
 
 #include "Scene.h"
 
-Scene::Scene() {
+Scene::Scene() :
+    background_{0.8, 0.8, 0.8} {
+}
+
+void Scene::SetBackgroud(float r, float g, float b) {
+    background_[0] = r;
+    background_[1] = g;
+    background_[2] = b;
 }
 
 void Scene::RenderScene() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glClearColor(0.8, 0.8, 0.8, 1.0);
+    glClearColor(background_[0], background_[1], background_[2], 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
     glm::mat4 projection, modelview;
     if (!SetupCamera(projection, modelview))

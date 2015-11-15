@@ -24,10 +24,18 @@ public:
     Scene();
 
     /**
+     * Sets the background color
+     */
+    void SetBackgroud(float r, float g, float b);
+
+    /**
      * Renders the scene
      * Throws runtime_error if there's no camera
      */
     void RenderScene();
+
+private:
+    float background_[3];
 };
 
 #endif
