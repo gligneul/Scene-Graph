@@ -31,9 +31,10 @@ void Group::SetupLight(const glm::mat4& modelview,
 }
 
 void Group::Render(const std::vector<LightInfo>& lights,
-        const glm::mat4& projection, const glm::mat4& modelview) {
+        const glm::mat4& projection, const glm::mat4& modelview,
+        bool render_transparent) {
     if (active_)
         for (auto& node : nodes_)
-            node->Render(lights, projection, modelview);
+            node->Render(lights, projection, modelview, render_transparent);
 }
 

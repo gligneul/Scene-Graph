@@ -17,6 +17,8 @@ Scene::Scene() {
 
 void Scene::RenderScene() {
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(0.8, 0.8, 0.8, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
     glm::mat4 projection, modelview;
@@ -24,6 +26,7 @@ void Scene::RenderScene() {
         throw std::runtime_error("Scene::Render(): Camera not found");
     std::vector<LightInfo> lights;
     SetupLight(modelview, lights);
-    Render(lights, projection, modelview);
+    Render(lights, projection, modelview, false);
+    Render(lights, projection, modelview, true);
 }
 

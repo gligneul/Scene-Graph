@@ -28,10 +28,12 @@ void Node::SetupLight(const glm::mat4& modelview,
 }
 
 void Node::Render(const std::vector<LightInfo>& lights,
-        const glm::mat4& projection, const glm::mat4& modelview) {
+        const glm::mat4& projection, const glm::mat4& modelview,
+        bool render_transparent) {
     (void)lights;
     (void)projection;
     (void)modelview;
+    (void)render_transparent;
 }
 
 void Node::SetActive(bool active) {

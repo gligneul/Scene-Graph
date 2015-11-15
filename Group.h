@@ -47,7 +47,8 @@ public:
      * Renders the node
      */
     virtual void Render(const std::vector<LightInfo>& lights,
-            const glm::mat4& projection, const glm::mat4& modelview);
+            const glm::mat4& projection, const glm::mat4& modelview,
+            bool render_transparent);
 
 private:
     /** Group's children */

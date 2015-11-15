@@ -69,13 +69,14 @@ void Transform::SetupLight(const glm::mat4& modelview,
 }
 
 void Transform::Render(const std::vector<LightInfo>& lights,
-        const glm::mat4& projection, const glm::mat4& modelview) {
+        const glm::mat4& projection, const glm::mat4& modelview,
+        bool render_transparent) {
     if (!active_)
         return;
 
     glm::mat4 sub_mv = modelview;
     if (manipulator_)
         sub_mv *= manipulator_->GetMatrix();
-    Group::Render(lights, projection, sub_mv * matrix_);
+    Group::Render(lights, projection, sub_mv * matrix_, render_transparent);
 }
 

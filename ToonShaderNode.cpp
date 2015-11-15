@@ -40,6 +40,10 @@ void ToonShaderNode::SetColor(unsigned int color, float alpha) {
     );
 }
 
+void ToonShaderNode::SetOpacity(float alpha) {
+    color_.w  = alpha;
+}
+
 void ToonShaderNode::SetMesh(std::shared_ptr<Mesh> mesh) {
     mesh_ = mesh;
 }
@@ -67,17 +71,25 @@ void ToonShaderNode::LoadLights(ShaderProgram *program,
 }
 
 void ToonShaderNode::Render(const std::vector<LightInfo>& lights,
-        const glm::mat4& projection, const glm::mat4& modelview) {
+        const glm::mat4& projection, const glm::mat4& modelview,
+        bool render_transparent) {
+
+    if ((render_transparent && color_.a == 1)
+        || (!render_transparent && color_.a < 1))
+        return;
+
     auto mvp = projection * modelview;
     auto normalmatrix = glm::transpose(glm::inverse(modelview));
 
-    shared_->silhouette_program->Enable();
-    shared_->silhouette_program->SetAttribLocation("position", 0);
-    shared_->silhouette_program->SetAttribLocation("normal", 1);
-    shared_->silhouette_program->SetUniformFloat("silhouette", silhouette_);
-    shared_->silhouette_program->SetUniformMat4("mvp", mvp);
-    mesh_->Draw();
+    if (color_.a == 1) {
+        shared_->silhouette_program->Enable();
+        shared_->silhouette_program->SetAttribLocation("position", 0);
+        shared_->silhouette_program->SetAttribLocation("normal", 1);
+        shared_->silhouette_program->SetUniformFloat("silhouette", silhouette_);
+        shared_->silhouette_program->SetUniformMat4("mvp", mvp);
+        mesh_->Draw();
     shared_->silhouette_program->Disable();
+    }
 
     shared_->toon_program->Enable();
     LoadLights(shared_->toon_program, lights);

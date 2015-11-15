@@ -58,7 +58,7 @@ static std::shared_ptr<Transform> CreateJeep();
 
 int main(int argc, char* argv[]) {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
     glutInitWindowSize(800, 600);
     glutCreateWindow("Scene Graph");
     glutDisplayFunc(Display);
@@ -135,8 +135,7 @@ static void CreateScene() {
     floor_t->Scale(1000, 0, 1000);
     scene->AddNode(floor_t);
 
-    auto floor = std::make_shared<ToonShaderNode>();
-    floor->SetColor(0xBADA5F);
+    auto floor = std::make_shared<ToonShaderNode>(0xBADA5F);
     floor->SetMesh("data/quad.msh");
     floor_t->AddNode(floor);
 
@@ -189,7 +188,8 @@ static std::shared_ptr<Transform> CreateJeep() {
     CreateJeepItem(jeep, "panel", 0x222222);
     CreateJeepItem(jeep, "seat", 0x705A34);
     CreateJeepItem(jeep, "windshieldcleaner", 0x222222);
-//    CreateJeepItem(jeep, "windshield", 0xEEEEEE);
+    auto windshield = CreateJeepItem(jeep, "windshield", 0xBBBBEE);
+    windshield->SetOpacity(0.3);
 
     // Create driver
     auto bunny_t = std::make_shared<Transform>();
@@ -259,8 +259,9 @@ static std::shared_ptr<Transform> CreateJeep() {
 
     // Create lights
     auto rightlight = std::make_shared<Transform>();
+    auto rightlight_model = CreateJeepItem(rightlight, "light", 0xEEEEEE);
+    rightlight_model->SetOpacity(0.3);
     jeep->AddNode(rightlight);
-    CreateJeepItem(rightlight, "light", 0xEEEEEE);
 
     auto rightlight_spot = std::make_shared<Light>();
     rightlight_spot->SetActive(false);

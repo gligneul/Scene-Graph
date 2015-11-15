@@ -34,6 +34,11 @@ public:
     void SetColor(unsigned int color, float alpha = 1.0f);
 
     /**
+     * Sets the opacity
+     */
+    void SetOpacity(float alpha);
+
+    /**
      * Sets the mesh
      */
     void SetMesh(std::shared_ptr<Mesh> mesh);
@@ -47,7 +52,8 @@ public:
      * Renders the node
      */
     void Render(const std::vector<LightInfo>& lights,
-            const glm::mat4& projection, const glm::mat4& modelview);
+            const glm::mat4& projection, const glm::mat4& modelview,
+            bool render_transparent);
 
 private:
     /**
