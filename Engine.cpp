@@ -20,7 +20,6 @@ static float clamp(float value, float max) {
         return value;
 }
 
-
 Engine::Engine(JeepNode jeep,
                JeepNode frontleftwheel_direction,
                JeepNode frontrightwheel_direction,
@@ -42,30 +41,18 @@ Engine::Engine(JeepNode jeep,
     last_time_(glutGet(GLUT_ELAPSED_TIME)) {
 }
 
-#define CONTROL_CLICK \
-    do { \
-        static int last_click = 0; \
-        int curr_click = glutGet(GLUT_ELAPSED_TIME); \
-        int dt = (curr_click - last_click); \
-        if (dt < 100) return; \
-        last_click = curr_click; \
-    } while (0)
-
 void Engine::Keyboard(unsigned char key) {
     switch (key) {
         case 'w':
-            CONTROL_CLICK;
             speed_ = clamp(speed_ + kSpeedIncrement, kSpeedMax);
             break;
         case 's':
-            CONTROL_CLICK;
             speed_ = clamp(speed_ - kSpeedIncrement, kSpeedMax);
             break;
         case ' ':
             speed_ = 0;
             break;
         case 'a':
-            CONTROL_CLICK;
             if (alpha_ >= kAlphaMax)
                 break;
             alpha_ = alpha_ + kAlphaIncrement;
@@ -74,7 +61,6 @@ void Engine::Keyboard(unsigned char key) {
             steering_wheel_->Rotate(kSteeringWheelIncrement, -0.7935, 0, .6085);
             break;
         case 'd':
-            CONTROL_CLICK;
             if (alpha_ <= -kAlphaMax)
                 break;
             alpha_ = alpha_ - kAlphaIncrement;

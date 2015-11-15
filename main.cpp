@@ -40,8 +40,18 @@ static struct {
 static int curr_camera = kDriver;
 
 /* Other stuff */
-static Light *sun;
-static Light *light;
+static Transform *sun = nullptr;
+static float sun_alpha = 0;
+static Light *jeep_light = nullptr;
+static const char *kKeyboardCommands =
+"Keys:\n"
+"        q       Quit\n"
+"        c       Change camera\n"
+"        wasd    Control jeep\n"
+"        space   Jeep break\n"
+"        l       Toggle jeep lights\n"
+"        b       Toggle sun light\n"
+"        nm      Rotate sun\n";
 
 /* Auxiliary functions and glut callbacks */
 static void Display();
@@ -51,6 +61,9 @@ static void Mouse(int button, int state, int x, int y);
 static void Motion(int x, int y);
 static void CreateScene();
 static std::shared_ptr<Camera> CreateCamera(Group *parent, int cameraId);
+static std::shared_ptr<Transform> CreateSun();
+static std::shared_ptr<Transform> CreateRoad();
+static std::shared_ptr<Transform> CreateShip();
 static std::shared_ptr<ToonShaderNode> CreateJeepItem(
         std::shared_ptr<Transform> jeep, const std::string& name,
         unsigned int color);
@@ -72,6 +85,7 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
     CreateScene();
+    std::cout << kKeyboardCommands;
     glutMainLoop();
     return 0; 
 }
@@ -84,18 +98,28 @@ static void Display() {
 static void Keyboard(unsigned char key, int, int) {
     switch (key) {
         case 'q':
-            delete scene;
             exit(0);
             break;
-        case 'l':
+        case 'b':
             sun->SetActive(!sun->GetActive());
-            light->SetActive(!light->GetActive());
+            break;
+        case 'l':
+            jeep_light->SetActive(!jeep_light->GetActive());
             break;
         case 'c':
             cameras[curr_camera].camera->SetActive(false);
             curr_camera = (curr_camera + 1) % kNCameras;
             cameras[curr_camera].camera->SetActive(true);
             break;
+        case 'n':
+        case 'm': {
+            float alpha = 2.5 * (key == 'n' ? 1 : -1);
+            if (fabs(sun_alpha + alpha) < 80) {
+                sun_alpha += alpha;
+                sun->Rotate(alpha, 1, 0, 0);
+            }
+            break;
+        }
     }
     engine->Keyboard(key);
     glutPostRedisplay();
@@ -124,34 +148,10 @@ static void CreateScene() {
     camera->SetCenter(0.5, 0.5, 0);
     camera->SetUp(0, 1, 0);
 
-    auto light = std::make_shared<Light>();
-    light->SetPosition(0, 1, 0, 0.001);
-    light->SetDiffuse(0.6, 0.6, 0.6);
-    light->SetAmbient(0.4, 0.4, 0.4);
-    scene->AddNode(light);
-    sun = light.get();
-
-    auto floor_t = std::make_shared<Transform>();
-    floor_t->Scale(1000, 0, 1000);
-    scene->AddNode(floor_t);
-
-    auto floor = std::make_shared<ToonShaderNode>(0xBADA5F);
-    floor->SetMesh("data/quad.msh");
-    floor_t->AddNode(floor);
-
-    auto reference_point_t = std::make_shared<Transform>();
-    reference_point_t->Translate(-10, 5, 0);
-    reference_point_t->Scale(3, 3, 3);
-    reference_point_t->Rotate(90, 0, -1, 0);
-    reference_point_t->Rotate(90, -1, 0, 0);
-    scene->AddNode(reference_point_t);
-
-    auto reference_point = std::make_shared<ToonShaderNode>(0x150812);
-    reference_point->SetMesh("data/klingon_starship.off");
-    reference_point_t->AddNode(reference_point);
-
-    auto jeep = CreateJeep();
-    scene->AddNode(jeep);
+    scene->AddNode(CreateSun());
+    scene->AddNode(CreateRoad());
+    scene->AddNode(CreateShip());
+    scene->AddNode(CreateJeep());
 }
 
 static std::shared_ptr<Camera> CreateCamera(Group *parent, int cameraId) {
@@ -166,6 +166,47 @@ static std::shared_ptr<Camera> CreateCamera(Group *parent, int cameraId) {
     cameras[cameraId].manipulator = manipulator;
 
     return camera;
+}
+
+static std::shared_ptr<Transform> CreateSun() {
+    sun = new Transform();
+
+    auto sun_height = std::make_shared<Transform>();
+    sun_height->Translate(0, 1000, 0);
+    sun->AddNode(sun_height);
+
+    auto light = std::make_shared<Light>();
+    light->SetPosition(0, 0, 0);
+    light->SetDiffuse(0.5, 0.5, 0.5);
+    light->SetAmbient(0.4, 0.4, 0.4);
+    sun_height->AddNode(light);
+
+    return std::shared_ptr<Transform>(sun);
+}
+
+static std::shared_ptr<Transform> CreateRoad() {
+    auto floor_t = std::make_shared<Transform>();
+    floor_t->Scale(1000, 0, 1000);
+
+    auto floor = std::make_shared<ToonShaderNode>(0xBADA5F);
+    floor->SetMesh("data/quad.msh");
+    floor_t->AddNode(floor);
+
+    return floor_t;
+}
+
+static std::shared_ptr<Transform> CreateShip() {
+    auto ship_t = std::make_shared<Transform>();
+    ship_t->Translate(-10, 5, 0);
+    ship_t->Scale(3, 3, 3);
+    ship_t->Rotate(90, 0, -1, 0);
+    ship_t->Rotate(90, -1, 0, 0);
+
+    auto ship = std::make_shared<ToonShaderNode>(0x444444);
+    ship->SetMesh("data/klingon_starship.off");
+    ship_t->AddNode(ship);
+
+    return ship_t;
 }
 
 static std::shared_ptr<ToonShaderNode> CreateJeepItem(
@@ -271,7 +312,7 @@ static std::shared_ptr<Transform> CreateJeep() {
     rightlight_spot->SetAmbient(0.42, 0.42, 0.42);
     rightlight_spot->SetAttenuation(1, 0.002, 0);
     rightlight->AddNode(rightlight_spot);
-    light = rightlight_spot.get();
+    jeep_light = rightlight_spot.get();
 
     auto leftlight = std::make_shared<Transform>();
     leftlight->Translate(0, 1.028, 0);
