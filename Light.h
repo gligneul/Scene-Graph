@@ -56,12 +56,24 @@ public:
     void SetupSpot(float x, float y, float z, float cutoff, float exponent);
 
     /**
+     * Enables the shadow map
+     */
+    void EnableShadowMap(const glm::vec3& center, const glm::vec3& up,
+            float fovy, float near, float far);
+
+    /**
      * Sets the lights
      * Returns the light info by reference
      */
     void SetupLight(const glm::mat4& modelview, std::vector<LightInfo>& lights);
 
+    /**
+     * Sets the shadow map
+     */
+    bool SetupShadowMap(ShadowMapInfo& info);
+
 private:
+    int light_id_;
     glm::vec4 position_;
     glm::vec4 ambient_;
     glm::vec4 diffuse_;
@@ -71,6 +83,15 @@ private:
     glm::vec4 spot_direction_;
     float spot_cutoff_;
     float spot_exponent_;
+    bool sm_enable_;
+    glm::vec3 sm_center_;
+    glm::vec3 sm_up_;
+    float sm_fovy_;
+    float sm_near_;
+    float sm_far_;
+    unsigned int sm_framebuffer_;
+    unsigned int sm_renderbuffer_;
+    unsigned int sm_texture_;
 };
 
 #endif

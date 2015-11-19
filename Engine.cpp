@@ -95,5 +95,16 @@ void Engine::Update() {
     float frontwheeltheta = ((speed_ * dt) / (0.438 * 2)) * (180.0 / M_PI);
     frontrightwheel_speed_->Rotate(frontwheeltheta, 0, 1, 0);
     frontleftwheel_speed_->Rotate(frontwheeltheta, 0, 1, 0);
+
+    // Reset rotation
+#if 1
+    double alpha_increment = -alpha_ * dt;
+    alpha_ += alpha_increment;
+    frontleftwheel_direction_->Rotate(alpha_increment, 0, 0, 1);
+    frontrightwheel_direction_->Rotate(alpha_increment, 0, 0, 1);
+    double steering_rotation = kSteeringWheelIncrement / kAlphaIncrement;
+    steering_wheel_->Rotate(alpha_increment * steering_rotation,
+                            -.7935, 0, .6085);
+#endif
 }
 

@@ -44,11 +44,21 @@ public:
             std::vector<LightInfo>& lights);
 
     /**
+     * Sets the shadow map
+     */
+    virtual bool SetupShadowMap(ShadowMapInfo& info);
+
+    /**
+     * Renders the shadow map
+     */
+    virtual void RenderShadowMap(ShadowMapInfo& info);
+
+    /**
      * Renders the node
      */
     virtual void Render(const std::vector<LightInfo>& lights,
             const glm::mat4& projection, const glm::mat4& modelview,
-            bool render_transparent);
+            bool render_transparent, const ShadowMapInfo& sm_info);
 
 private:
     /** Group's children */

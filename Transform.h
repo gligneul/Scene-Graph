@@ -62,11 +62,21 @@ public:
     void SetupLight(const glm::mat4& modelview, std::vector<LightInfo>& lights);
 
     /**
+     * Sets the shadow map
+     */
+    bool SetupShadowMap(ShadowMapInfo& info);
+
+    /**
+     * Renders the shadow map
+     */
+    void RenderShadowMap(ShadowMapInfo& info);
+
+    /**
      * Renders the node
      */
     void Render(const std::vector<LightInfo>& lights,
             const glm::mat4& projection, const glm::mat4& modelview,
-            bool render_transparent);
+            bool render_transparent, const ShadowMapInfo& sm_info);
 
 private:
     std::unique_ptr<Manipulator> manipulator_;

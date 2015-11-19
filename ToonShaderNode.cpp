@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include <GL/glew.h>
 #include <glm/gtx/transform.hpp>
 
 #include "Mesh.h"
@@ -25,6 +26,7 @@ ToonShaderNode::ToonShaderNode(unsigned int color, float silhouette) :
         shared_ = new Shared;
         shared_->toon_program = new ShaderProgram("shaders/toonshader");
         shared_->silhouette_program = new ShaderProgram("shaders/silhouette");
+        shared_->shadowmap_program = new ShaderProgram("shaders/shadowmap");
     }
 }
 
@@ -70,9 +72,23 @@ void ToonShaderNode::LoadLights(ShaderProgram *program,
     }
 }
 
+void ToonShaderNode::RenderShadowMap(ShadowMapInfo& info) {
+    if (!active_ || color_.a != 1)
+        return;
+
+    auto mvp = info.projection * info.modelview;
+    shared_->shadowmap_program->Enable();
+    shared_->shadowmap_program->SetAttribLocation("position", 0);
+    shared_->shadowmap_program->SetUniformMat4("mvp", mvp);
+    mesh_->Draw();
+    shared_->shadowmap_program->Disable();
+}
+
 void ToonShaderNode::Render(const std::vector<LightInfo>& lights,
         const glm::mat4& projection, const glm::mat4& modelview,
-        bool render_transparent) {
+        bool render_transparent, const ShadowMapInfo& sm_info) {
+    if (!active_)
+        return;
 
     if ((render_transparent && color_.a == 1)
         || (!render_transparent && color_.a < 1))
@@ -81,6 +97,13 @@ void ToonShaderNode::Render(const std::vector<LightInfo>& lights,
     auto mvp = projection * modelview;
     auto normalmatrix = glm::transpose(glm::inverse(modelview));
 
+    glm::mat4 bias_matrix(
+            0.5, 0.0, 0.0, 0.0,
+            0.0, 0.5, 0.0, 0.0,
+            0.0, 0.0, 0.5, 0.0,
+            0.5, 0.5, 0.5, 1.0
+    );
+
     if (color_.a == 1) {
         shared_->silhouette_program->Enable();
         shared_->silhouette_program->SetAttribLocation("position", 0);
@@ -88,10 +111,15 @@ void ToonShaderNode::Render(const std::vector<LightInfo>& lights,
         shared_->silhouette_program->SetUniformFloat("silhouette", silhouette_);
         shared_->silhouette_program->SetUniformMat4("mvp", mvp);
         mesh_->Draw();
-    shared_->silhouette_program->Disable();
+        shared_->silhouette_program->Disable();
     }
 
+    glPushAttrib(GL_TEXTURE_BIT);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, sm_info.texture);
+
     shared_->toon_program->Enable();
+
     LoadLights(shared_->toon_program, lights);
     shared_->toon_program->SetAttribLocation("position", 0);
     shared_->toon_program->SetAttribLocation("normal", 1);
@@ -99,7 +127,15 @@ void ToonShaderNode::Render(const std::vector<LightInfo>& lights,
     shared_->toon_program->SetUniformMat4("normalmatrix", normalmatrix);
     shared_->toon_program->SetUniformMat4("mvp", mvp);
     shared_->toon_program->SetUniformVec4("color", color_);
+    shared_->toon_program->SetUniformMat4("sm_mvp",
+            bias_matrix * sm_info.projection * sm_info.modelview);
+    shared_->toon_program->SetUniformInteger("sm_light", sm_info.light_id);
+    shared_->toon_program->SetUniformInteger("sm_texture", 0);
+    
     mesh_->Draw();
+
     shared_->toon_program->Disable();
+
+    glPopAttrib();
 }
 

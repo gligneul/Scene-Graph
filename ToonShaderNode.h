@@ -49,11 +49,16 @@ public:
     void SetMesh(const std::string& mesh);
 
     /**
+     * Renders the shadow map
+     */
+    void RenderShadowMap(ShadowMapInfo& info);
+
+    /**
      * Renders the node
      */
     void Render(const std::vector<LightInfo>& lights,
             const glm::mat4& projection, const glm::mat4& modelview,
-            bool render_transparent);
+            bool render_transparent, const ShadowMapInfo& sm_info);
 
 private:
     /**
@@ -69,6 +74,7 @@ private:
     struct Shared {
         ShaderProgram *toon_program;
         ShaderProgram *silhouette_program;
+        ShaderProgram *shadowmap_program;
     };
     static Shared *shared_;
 

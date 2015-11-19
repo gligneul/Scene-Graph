@@ -30,11 +30,26 @@ void Group::SetupLight(const glm::mat4& modelview,
             node->SetupLight(modelview, lights);
 }
 
-void Group::Render(const std::vector<LightInfo>& lights,
-        const glm::mat4& projection, const glm::mat4& modelview,
-        bool render_transparent) {
+bool Group::SetupShadowMap(ShadowMapInfo& info) {
     if (active_)
         for (auto& node : nodes_)
-            node->Render(lights, projection, modelview, render_transparent);
+            if (node->SetupShadowMap(info))
+                return true;
+    return false;
+}
+
+void Group::RenderShadowMap(ShadowMapInfo& info) {
+    if (active_)
+        for (auto& node : nodes_)
+            node->RenderShadowMap(info);
+}
+
+void Group::Render(const std::vector<LightInfo>& lights,
+        const glm::mat4& projection, const glm::mat4& modelview,
+        bool render_transparent, const ShadowMapInfo& sm_info) {
+    if (active_)
+        for (auto& node : nodes_)
+            node->Render(lights, projection, modelview, render_transparent,
+                    sm_info);
 }
 

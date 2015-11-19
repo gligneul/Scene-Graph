@@ -27,13 +27,23 @@ void Node::SetupLight(const glm::mat4& modelview,
     (void)lights;
 }
 
+bool Node::SetupShadowMap(ShadowMapInfo& info) {
+    (void)info;
+    return false;
+}
+
 void Node::Render(const std::vector<LightInfo>& lights,
         const glm::mat4& projection, const glm::mat4& modelview,
-        bool render_transparent) {
+        bool render_transparent, const ShadowMapInfo& sm_info) {
     (void)lights;
     (void)projection;
     (void)modelview;
     (void)render_transparent;
+    (void)sm_info;
+}
+
+void Node::RenderShadowMap(ShadowMapInfo& info) {
+    (void)info;
 }
 
 void Node::SetActive(bool active) {

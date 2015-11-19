@@ -26,10 +26,13 @@ const vec3 GLOBAL_AMBIENT = vec3(0.2, 0.2, 0.2);
 
 in vec3 frag_position;
 in vec3 frag_normal;
+in vec3 frag_sm_position;
 
 uniform vec4 color;
 uniform int nlights;
 uniform LightInfo lights[MAX_LIGHTS];
+uniform int sm_light;
+uniform sampler2D sm_texture;
 
 out vec4 frag_color;
 
@@ -54,11 +57,18 @@ vec3 compute_light_intensity(LightInfo light, vec3 frag_normal) {
     return intensity;
 }
 
+bool is_shadow() {
+    return texture(sm_texture, frag_sm_position.xy).z < frag_sm_position.z;
+//    return false;
+}
+
 void main () {
     vec3 frag_normal_n = normalize(frag_normal);
     vec3 frag_light = vec3(0, 0, 0);
-    for (int i = 0; i < nlights; i++)
-        frag_light += compute_light_intensity(lights[i], frag_normal_n);
+    for (int i = 0; i < nlights; i++) {
+        if (i != sm_light || !is_shadow())
+            frag_light += compute_light_intensity(lights[i], frag_normal_n);
+    }
     frag_light += GLOBAL_AMBIENT;
     frag_light = floor(frag_light * NUM_COLORS) / NUM_COLORS;
     frag_color = vec4(color.rgb * frag_light, color.a);

@@ -14,13 +14,16 @@ in vec3 normal;
 uniform mat4 modelview;
 uniform mat4 normalmatrix;
 uniform mat4 mvp;
+uniform mat4 sm_mvp;
 
 out vec3 frag_position;
 out vec3 frag_normal;
+out vec3 frag_sm_position;
 
 void main () {
     frag_position = vec3(modelview * vec4(position, 1.0));
     frag_normal = normalize(vec3(normalmatrix * vec4(normal, 1.0)));
+    frag_sm_position = vec3(sm_mvp * vec4(position, 1));
     gl_Position = mvp * vec4(position, 1.0);
 }
 

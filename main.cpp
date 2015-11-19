@@ -71,7 +71,8 @@ static std::shared_ptr<Transform> CreateJeep();
 
 int main(int argc, char* argv[]) {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | 
+            GLUT_MULTISAMPLE);
     glutInitWindowSize(800, 600);
     glutCreateWindow("Scene Graph");
     glutDisplayFunc(Display);
@@ -118,7 +119,7 @@ static void Keyboard(unsigned char key, int, int) {
         case 'n':
         case 'm': {
             float alpha = 2.5 * (key == 'n' ? 1 : -1);
-            if (fabs(sun_alpha + alpha) < 80) {
+            if (fabs(sun_alpha + alpha) < 60) {
                 sun_alpha += alpha;
                 sun->Rotate(alpha, 1, 0, 0);
             }
@@ -177,13 +178,15 @@ static std::shared_ptr<Transform> CreateSun() {
     sun = new Transform();
 
     auto sun_height = std::make_shared<Transform>();
-    sun_height->Translate(0, 1000, 0);
+    sun_height->Translate(0, 100, 0);
     sun->AddNode(sun_height);
 
     auto light = std::make_shared<Light>();
     light->SetPosition(0, 0, 0);
     light->SetDiffuse(0.5, 0.5, 0.5);
     light->SetAmbient(0.4, 0.4, 0.4);
+    light->EnableShadowMap(glm::vec3(0, -1, 0), glm::vec3(1, 0, 0), 100,
+            80, 120);
     sun_height->AddNode(light);
 
     return std::shared_ptr<Transform>(sun);
