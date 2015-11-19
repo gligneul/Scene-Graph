@@ -10,6 +10,7 @@
 #include <tuple>
 #include <iostream>
 
+#include <glm/gtc/matrix_transform.hpp>
 #include <GL/glew.h>
 #include <GL/glut.h>
 
@@ -118,7 +119,7 @@ static void Keyboard(unsigned char key, int, int) {
             break;
         case 'n':
         case 'm': {
-            float alpha = 2.5 * (key == 'n' ? 1 : -1);
+            float alpha = 2.5 * (key == 'n' ? -1 : 1);
             if (fabs(sun_alpha + alpha) < 60) {
                 sun_alpha += alpha;
                 sun->Rotate(alpha, 1, 0, 0);
@@ -178,15 +179,15 @@ static std::shared_ptr<Transform> CreateSun() {
     sun = new Transform();
 
     auto sun_height = std::make_shared<Transform>();
-    sun_height->Translate(0, 100, 0);
+    sun_height->Translate(30, 500, 30);
     sun->AddNode(sun_height);
 
     auto light = std::make_shared<Light>();
     light->SetPosition(0, 0, 0);
     light->SetDiffuse(0.5, 0.5, 0.5);
     light->SetAmbient(0.4, 0.4, 0.4);
-    light->EnableShadowMap(glm::vec3(0, -1, 0), glm::vec3(1, 0, 0), 100,
-            80, 120);
+    light->EnableShadowMap(glm::vec3(0, -1, 0), glm::vec3(1, 0, 0), 
+            glm::ortho<float>(-50, 50, -50, 50, 400, 600));
     sun_height->AddNode(light);
 
     return std::shared_ptr<Transform>(sun);
@@ -221,8 +222,8 @@ static std::shared_ptr<Transform> CreateRoad() {
         auto strip_t = std::make_shared<Transform>();
         strip_t->Translate(i * 8 - 500, 0.002, 0);
         strip_t->Scale(2.5, 1, 0.2);
-        strip_t->AddNode(strip);
         floor->AddNode(strip_t);
+        strip_t->AddNode(strip);
     }
 
     return floor;
@@ -230,8 +231,8 @@ static std::shared_ptr<Transform> CreateRoad() {
 
 static std::shared_ptr<Transform> CreateShip() {
     auto ship_t = std::make_shared<Transform>();
-    ship_t->Translate(-10, 5, 0);
-    ship_t->Scale(3, 3, 3);
+    ship_t->Translate(-10, 10, 0);
+    ship_t->Scale(10, 10, 10);
     ship_t->Rotate(90, 0, -1, 0);
     ship_t->Rotate(90, -1, 0, 0);
 

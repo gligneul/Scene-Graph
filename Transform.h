@@ -69,14 +69,12 @@ public:
     /**
      * Renders the shadow map
      */
-    void RenderShadowMap(ShadowMapInfo& info);
+    void RenderShadowMap(ShadowMapInfo& info, const glm::mat4& modelview);
 
     /**
      * Renders the node
      */
-    void Render(const std::vector<LightInfo>& lights,
-            const glm::mat4& projection, const glm::mat4& modelview,
-            bool render_transparent, const ShadowMapInfo& sm_info);
+    void Render(RenderInfo& info, const glm::mat4& modelview);
 
 private:
     std::unique_ptr<Manipulator> manipulator_;

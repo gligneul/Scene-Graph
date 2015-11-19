@@ -36,13 +36,24 @@ uniform sampler2D sm_texture;
 
 out vec4 frag_color;
 
-vec3 compute_light_intensity(LightInfo light, vec3 frag_normal) {
+bool is_shadow()
+{
+    float face = texture(sm_texture, frag_sm_position.xy).z + 0.0001;
+    return face < frag_sm_position.z;
+}
+
+vec3 compute_light_intensity(LightInfo light, int id, vec3 frag_normal)
+{
     vec3 light_position = light.position.xyz / light.position.w;
-    vec3 frag2light = normalize(light_position - frag_position);
-    float diff = max(dot(frag_normal, frag2light), 0);
     float dist = length(light_position - frag_position);
     float att = 1 / (light.attenuation.x + light.attenuation.y * dist
                      + light.attenuation.y * dist * dist);
+
+    if (id == sm_light && is_shadow())
+        return att * vec3(light.ambient);
+
+    vec3 frag2light = normalize(light_position - frag_position);
+    float diff = max(dot(frag_normal, frag2light), 0);
     vec3 intensity = att * vec3(light.ambient + diff * light.diffuse);
 
     if (light.is_spot) {
@@ -57,17 +68,12 @@ vec3 compute_light_intensity(LightInfo light, vec3 frag_normal) {
     return intensity;
 }
 
-bool is_shadow() {
-    return texture(sm_texture, frag_sm_position.xy).z < frag_sm_position.z;
-//    return false;
-}
-
-void main () {
+void main ()
+{
     vec3 frag_normal_n = normalize(frag_normal);
     vec3 frag_light = vec3(0, 0, 0);
     for (int i = 0; i < nlights; i++) {
-        if (i != sm_light || !is_shadow())
-            frag_light += compute_light_intensity(lights[i], frag_normal_n);
+        frag_light += compute_light_intensity(lights[i], i, frag_normal_n);
     }
     frag_light += GLOBAL_AMBIENT;
     frag_light = floor(frag_light * NUM_COLORS) / NUM_COLORS;

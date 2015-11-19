@@ -38,18 +38,15 @@ bool Group::SetupShadowMap(ShadowMapInfo& info) {
     return false;
 }
 
-void Group::RenderShadowMap(ShadowMapInfo& info) {
+void Group::RenderShadowMap(ShadowMapInfo& info, const glm::mat4& modelview) {
     if (active_)
         for (auto& node : nodes_)
-            node->RenderShadowMap(info);
+            node->RenderShadowMap(info, modelview);
 }
 
-void Group::Render(const std::vector<LightInfo>& lights,
-        const glm::mat4& projection, const glm::mat4& modelview,
-        bool render_transparent, const ShadowMapInfo& sm_info) {
+void Group::Render(RenderInfo& info, const glm::mat4& modelview) {
     if (active_)
         for (auto& node : nodes_)
-            node->Render(lights, projection, modelview, render_transparent,
-                    sm_info);
+            node->Render(info, modelview);
 }
 

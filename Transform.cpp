@@ -81,27 +81,26 @@ bool Transform::SetupShadowMap(ShadowMapInfo& info) {
     return false;
 }
 
-void Transform::RenderShadowMap(ShadowMapInfo& info) {
+void Transform::RenderShadowMap(ShadowMapInfo& info,
+        const glm::mat4& modelview) {
     if (!active_)
         return;
 
-    ShadowMapInfo sub_info = info;
+    glm::mat4 sub_modelview = modelview;
     if (manipulator_)
-        sub_info.modelview *= manipulator_->GetMatrix();
-    sub_info.modelview *= matrix_;
-    Group::RenderShadowMap(sub_info);
+        sub_modelview *= manipulator_->GetMatrix();
+    sub_modelview *= matrix_;
+    Group::RenderShadowMap(info, sub_modelview);
 }
 
-void Transform::Render(const std::vector<LightInfo>& lights,
-        const glm::mat4& projection, const glm::mat4& modelview,
-        bool render_transparent, const ShadowMapInfo& sm_info) {
+void Transform::Render(RenderInfo& info, const glm::mat4& modelview) {
     if (!active_)
         return;
 
-    glm::mat4 sub_mv = modelview;
+    glm::mat4 sub_modelview = modelview;
     if (manipulator_)
-        sub_mv *= manipulator_->GetMatrix();
-    Group::Render(lights, projection, sub_mv * matrix_, render_transparent,
-            sm_info);
+        sub_modelview *= manipulator_->GetMatrix();
+    sub_modelview *= matrix_;
+    Group::Render(info, sub_modelview);
 }
 

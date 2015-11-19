@@ -39,11 +39,27 @@ public:
      * Holds the shadow map information
      */
     struct ShadowMapInfo {
+        std::vector<glm::mat4> mvp;
+        std::vector<glm::mat4> mvp_transparent;
         glm::mat4 modelview;
         glm::mat4 projection;
         unsigned int light_id;
         unsigned int framebuffer;
         unsigned int texture;
+        unsigned int width;
+        unsigned int height;
+    };
+
+    /**
+     * Holds the render information
+     */
+    struct RenderInfo {
+        int id;
+        glm::mat4 modelview;
+        glm::mat4 projection;
+        std::vector<LightInfo> lights;
+        ShadowMapInfo shadowmap;
+        bool render_transparent;
     };
 
     /**
@@ -78,14 +94,13 @@ public:
     /**
      * Renders the shadow map
      */
-    virtual void RenderShadowMap(ShadowMapInfo& info);
+    virtual void RenderShadowMap(ShadowMapInfo& info,
+            const glm::mat4& modelview);
 
     /**
      * Renders the node
      */
-    virtual void Render(const std::vector<LightInfo>& lights,
-            const glm::mat4& projection, const glm::mat4& modelview,
-            bool render_transparent, const ShadowMapInfo& sm_info);
+    virtual void Render(RenderInfo& info, const glm::mat4& modelview);
 
     /**
      * Sets whether the node is active

@@ -59,7 +59,7 @@ public:
      * Enables the shadow map
      */
     void EnableShadowMap(const glm::vec3& center, const glm::vec3& up,
-            float fovy, float near, float far);
+            const glm::mat4& projection);
 
     /**
      * Sets the lights
@@ -73,6 +73,11 @@ public:
     bool SetupShadowMap(ShadowMapInfo& info);
 
 private:
+    // Constants
+    const int kShadowmapWidth = 8192;
+    const int kShadowmapHeight = kShadowmapWidth;
+
+    // Attributes
     int light_id_;
     glm::vec4 position_;
     glm::vec4 ambient_;
@@ -86,9 +91,7 @@ private:
     bool sm_enable_;
     glm::vec3 sm_center_;
     glm::vec3 sm_up_;
-    float sm_fovy_;
-    float sm_near_;
-    float sm_far_;
+    glm::mat4 sm_projection_;
     unsigned int sm_framebuffer_;
     unsigned int sm_renderbuffer_;
     unsigned int sm_texture_;
